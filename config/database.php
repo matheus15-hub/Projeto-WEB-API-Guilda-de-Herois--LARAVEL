@@ -95,7 +95,8 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
+            'search_path' => 'Joao_Victor_trabalho_BD',
+		'schema' => 'Joao_Victor_trabalho_BD',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 

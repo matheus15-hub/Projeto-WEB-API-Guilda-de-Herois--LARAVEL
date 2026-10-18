@@ -60,3 +60,75 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 =======
 # Projeto-WEB-API-Guilda-de-Herois
 >>>>>>> 5fdd916bba963de9fe946ed551ec06ab523debc7
+
+
+# CONEXÃO COM O BANCO DE DADOS
+
+## 1. Objetivo
+
+O objetivo desse processo foi conectar o projeto Laravel ao banco de dados PostgreSQL que já existia no Neon e aproveitar as tabelas que estavam prontas. Em vez de criar tudo novamente por meio de migrations, utilizei uma ferramenta para gerar os Models com base na estrutura do banco.
+
+## 2. Configuração do banco
+
+Primeiro, configurei a conexão com o PostgreSQL no arquivo `.env`, informando os dados necessários para acessar o banco. Depois, conferi o arquivo `config/database.php` para ajustar as configurações da conexão `pgsql`.
+
+Como as tabelas estavam dentro de um schema específico, também precisei configurar o `search_path` e a opção `schema` com o nome correto: `Joao_Victor_trabalho_BD`. Essa parte foi importante porque, inicialmente, o gerador não estava encontrando as tabelas.
+
+Para verificar se a conexão estava funcionando, utilizei o comando:
+
+```bash
+php artisan db:show
+```
+
+Com ele, consegui visualizar informações do banco e confirmar que o Laravel estava conseguindo acessá-lo.
+
+## 3. Instalação e utilização do Reliese
+
+Para gerar os Models sem precisar criá-los manualmente, instalei o pacote Reliese com o seguinte comando:
+
+```bash
+composer require reliese/laravel --dev
+```
+
+Depois, publiquei o arquivo de configuração do pacote:
+
+```bash
+php artisan vendor:publish --tag=reliese-models
+```
+
+Esse comando criou o arquivo `config/models.php`, que permite configurar como os Models serão gerados.
+
+Durante os testes, precisei corrigir o nome do schema e limpar o cache das configurações para que o Laravel reconhecesse os valores atualizados. Para isso, utilizei:
+
+```bash
+php artisan config:clear
+```
+
+Com a configuração corrigida, consegui gerar primeiro o Model da tabela `aventureiro`:
+
+```bash
+php artisan code:models --connection=pgsql --schema=Joao_Victor_trabalho_BD --table=aventureiro
+```
+
+Depois, utilizei o comando abaixo para gerar os Models das demais tabelas encontradas no schema:
+
+```bash
+php artisan code:models --connection=pgsql --schema=Joao_Victor_trabalho_BD
+```
+
+Por fim, conferi os arquivos criados com o comando:
+
+```bash
+ls -la app/Models
+```
+
+## 4. Resultado obtido
+
+Com esse procedimento, foi possível gerar os Models correspondentes às tabelas do projeto, como `Aventureiro`, `Classe`, `Guilda`, `Missao`, `MissoesCompletadas` e `Monstro`.
+
+Esses arquivos ficam no diretório `app/Models` e permitem que o Laravel trabalhe com os registros do banco por meio do Eloquent. Assim, não foi necessário criar migrations para reproduzir as tabelas que já estavam disponíveis no PostgreSQL.
+
+## 5. Conclusão
+
+Esse processo facilitou o desenvolvimento do projeto, pois permitiu aproveitar o banco de dados existente sem precisar montar novamente toda a sua estrutura. O Reliese ajudou a gerar os Models automaticamente, economizando tempo e deixando o projeto preparado para utilizar as tabelas por meio do Laravel.
+
