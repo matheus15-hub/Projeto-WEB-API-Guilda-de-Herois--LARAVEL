@@ -3,47 +3,48 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\ClasseRequest;
+use App\Services\ClasseService;
+use Illuminate\Http\JsonResponse;
+
 
 class ClasseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    
+    public function __construct(private ClasseService $classeService) { }
+
+    public function index(): JsonResponse
     {
-        //
+       $classe = $this->classeService->getClasseAll();
+       
+       return response()->Json($classe);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function store(ClasseRequest $request) : JsonResponse 
     {
-        //
+        $classe = $this->classeService->createClasse($request->validated());
+        
+        return response()->json($classe, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    
+    public function show(int $id) : JsonResponse
     {
-        //
+        $classe = $this->classeService->getClasseById($id);
+        return response()->json($classe);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    
+    public function update(int $id, ClasseRequest $request) : JsonResponse
     {
-        //
+        $classe = $this->classeService->updateClasseById($id, $request->validated());
+        return response()->json(null,204);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(int $id) : JsonResponse
     {
-        //
+        $this->classeService->deleteClasseById($id);
+        return response()->json(null, 204);
     }
 }
