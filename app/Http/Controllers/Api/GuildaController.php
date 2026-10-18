@@ -3,47 +3,45 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\GuildaRequest;
+use App\Services\GuildaService;
+use Illuminate\Http\JsonResponse;
+
 
 class GuildaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private GuildaService $guildaService) { }    
+
+    public function index() : JsonResponse
     {
-        //
+       $guida = $this->guildaService->getGuildaAll();
+       return response()->json($guida);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(GuildaRequest $request): JsonResponse
     {
-        //
+        $guilda = $this->guildaService->createGuilda($request->validated());
+
+        return response()->json($guilda, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(int $id) : JsonResponse
     {
-        //
+        $guilda = $this->guildaService->getGuildaById($id);
+        
+        return response()->json($guilda);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(int $id , GuildaRequest $request): JsonResponse
     {
-        //
+        $guilda = $this->guildaService->updateGuildaById($id, $request->validated());
+        return response()->json($guilda, 204);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(string $id) : JsonResponse
     {
-        //
+        $this->guildaService->deleteGuildaById($id);
+        return response()->json(null, 204 );
     }
 }
