@@ -12,7 +12,7 @@ class AventureiroService{
 
         $aventureiro = new Aventureiro();
 
-        $aventureiro->nome = $dados['nome'];
+        $aventureiro->aventureiro_nome = $dados['nome'];
         $aventureiro->idade = $dados['idade'];
         $aventureiro->experiencia= $dados['experiencia'];
         $aventureiro->ouro = $dados['ouro'];
@@ -34,7 +34,7 @@ class AventureiroService{
     public function updateAventureiroById(int $id , array $dados) : Aventureiro
     {   
         $aventureiro = $this->getAventureiroByID($id);
-        $aventureiro->nome = $dados['nome'];
+        $aventureiro->aventureiro_nome = $dados['nome'];
         $aventureiro->id_classe = $dados['id_classe'];
         $aventureiro->id_guilda = $dados['id_guilda'];
 

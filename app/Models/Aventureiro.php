@@ -30,7 +30,8 @@ class Aventureiro extends Model
 {
 	protected $table = 'aventureiro';
 	protected $primaryKey = 'aventureiro_id';
-	public $incrementing = false;
+	protected $keyType = 'int';
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [
