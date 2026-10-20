@@ -3,47 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AventureiroRequest;
+use App\Services\AventureiroService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AventureiroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private AventureiroService $aventureiroService){}
+    
+
+    public function index() : JsonResponse
     {
-        //
+        $avent = $this->aventureiroService->getAventureiroAll();
+        return response()->json($avent);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(AventureiroRequest $request): JsonResponse
+{
+    $id = $this->aventureiroService->createAventureiro(  $request->validated());
+
+    return response()->json([
+        'mensagem' => 'Aventureiro criado com sucesso!',
+        'Aventureiro::' => $id
+    ], 201);
+}
+    
+    
+    public function show(int $id): JsonResponse
     {
-        //
+        $avent = $this->aventureiroService->getAventureiroByID($id);
+        return response()->json($avent);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+
+    public function update(int $id, AventureiroRequest $request) : JsonResponse
     {
-        //
+        $avent = $this->aventureiroService->updateAventureiroById($id , $request->validated());
+        return response()->json($avent, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(int $id) : JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $avent = $this->aventureiroService->deleteAventureiroById($id);
+        return response()->json(null,204);
     }
 }

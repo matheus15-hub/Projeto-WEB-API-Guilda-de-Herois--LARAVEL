@@ -32,36 +32,18 @@ class AventureiroRequest extends FormRequest
                 "regex:/^[\p{L}\s'-]+$/u",
             ],
 
-            'idade' => [
-                'required',
-                'integer',
-                'min:14',
-            ],
-
-            'experiencia' => [
-                'required',
-                'integer',
-                'min:0',
-            ],
-
-            'ouro' => [
-                'required',
-                'integer',
-                'min:0',
-            ],
-
-            'classe_id' => [
+            'id_classe' => [
                 'required',
                 'integer',
                 'min:1',
-                'exists:Joao_Victor_trabalho_BD.classe,id_classe',
+                'exists:classe,classe_id',
             ],
 
-            'guilda_id' => [
+            'id_guilda' => [
                 'required',
                 'integer',
                 'min:1',
-                'exists:Joao_Victor_trabalho_BD.guilda,id_guilda',
+                'exists:guilda,guilda_id',
             ],
         ];
         
