@@ -24,21 +24,22 @@ class ClasseRequest extends FormRequest
      */
     public function rules(): array
     {
+        $regra = $this->isMethod('post') ? "required" : "sometimes";
         return [
             'nome' => [
-                'required',
+                $regra,
                 'string',
                 'min:4',
                 'max:150',
             ],
 
             'descricao' => [
-                'required',
+                $regra,
                 'string',
             ],
 
             'raridade' => [
-                'required',
+                $regra,
                 Rule::enum(Raridade::class),
             ],
         ];

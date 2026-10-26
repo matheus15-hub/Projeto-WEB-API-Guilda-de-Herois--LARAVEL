@@ -38,8 +38,9 @@ class MonstroService{
         if(isset($dados['nome'])){
             $monstro->monstro_nome = $dados['nome'];
         }
-        
+        if(isset($dados['drop_xp'])){
             $monstro->drop_xp = $dados['drop_xp'];
+        }
 
         $monstro->save();
 

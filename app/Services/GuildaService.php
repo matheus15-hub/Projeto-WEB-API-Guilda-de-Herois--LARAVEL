@@ -15,7 +15,7 @@ class GuildaService{
         $guilda->lema = $dados['lema'];
         
         $guilda->save();
-        return  $guilda;
+        return  $guilda->refresh();
     }
 
     public function getGuildaById(int $id) : Guilda
@@ -32,7 +32,11 @@ class GuildaService{
     {
         $guilda = $this->getGuildaById($id);
 
-        $guilda->guilda_nome = $dados['nome'];
+        if(isset($dados['nome'])){
+
+            $guilda->guilda_nome = $dados['nome'];
+        }
+        if(isset($dados['lema']))
         $guilda->lema = $dados['lema'];
 
         $guilda->save();

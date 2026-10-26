@@ -28,7 +28,7 @@ class Missao extends Model
 {
 	protected $table = 'missao';
 	protected $primaryKey = 'missao_id';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

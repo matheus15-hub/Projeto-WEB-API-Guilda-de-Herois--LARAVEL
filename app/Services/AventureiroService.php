@@ -21,7 +21,7 @@ class AventureiroService{
 
         $aventureiro->save();
 
-        return $aventureiro;
+        return $aventureiro->refresh();
     }
 
     public function getAventureiroByID(int $id) : Aventureiro {
@@ -34,13 +34,22 @@ class AventureiroService{
     public function updateAventureiroById(int $id , array $dados) : Aventureiro
     {   
         $aventureiro = $this->getAventureiroByID($id);
-        $aventureiro->aventureiro_nome = $dados['nome'];
-        $aventureiro->id_classe = $dados['id_classe'];
-        $aventureiro->id_guilda = $dados['id_guilda'];
+        if(isset($dados['nome'])){
+            $aventureiro->aventureiro_nome = $dados['nome'];
+        }
+        if(isset($dados['idade'])){
+            $aventureiro->idade= $dados['idade'];
+        }
+        if(isset($dados['id_classe'])){
+            $aventureiro->id_classe = $dados['id_classe'];
+            }
+        if(isset($dados['id_guilda'])){
+            $aventureiro->id_guilda = $dados['id_guilda'];
+            }   
 
         $aventureiro ->save();
 
-        return $aventureiro;
+        return $aventureiro->refresh();
     }
 
     public function deleteAventureiroById(int $id) : void
