@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\RegistroRequest;
 use App\Models\Guilda;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -18,12 +18,12 @@ class AuthController extends Controller
 {
     public function showRegister(): View
     {
-        return view('auth.register', [
+        return view('auth.registro', [
             'guildas' => Guilda::orderBy('guilda_nome')->get(),
         ]);
     }
 
-    public function register(RegisterRequest $request): RedirectResponse
+    public function register(RegistroRequest $request): RedirectResponse
     {
         $user = User::create($request->validated());
 
@@ -40,11 +40,11 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        $credenciais = $request->only('email', 'password');
+        $credenciais = $request->only('name', 'password');
 
         if (! Auth::attempt($credenciais, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'E-mail ou senha incorretos.',
+                'name' => 'Nome ou senha incorretos.',
             ]);
         }
 

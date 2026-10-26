@@ -14,16 +14,16 @@ class DashboardController extends Controller
 
         //apenas vai ter os aventureiros e a guilda do usuário
         $aventureiros = $user->id_guilda
-        ?  Aventureiro::with('classe')
+            ? Aventureiro::with('classe')
             ->where('id_guilda', $user->id_guilda)
-            ->orderBy ('aventureiro_nome')
+            ->orderBy('aventureiro_nome')
             ->get()
-            :collect();
+            : collect();
 
-        return view ('dashboard', [
+        return view('dashboard', [
             'user' => $user,
-            'guilda' =>$user->guilda,
-            'aventureiro' => $aventureiros,
+            'guilda' => $user->guilda,
+            'aventureiros' => $aventureiros,
         ]);
     }
 }

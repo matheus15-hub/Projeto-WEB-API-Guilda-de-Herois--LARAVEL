@@ -14,19 +14,13 @@
             <h2>Criar conta</h2>
             <p class="sub">Escolha a guilda que você vai administrar.</p>
 
-            <form method="POST" action="{{ route('registro') }}" novalidate>
+            <form method="POST" action="{{ route('register') }}" novalidate>
                 @csrf
 
                 <div class="field {{ $errors->has('name') ? 'has-error' : '' }}">
                     <label for="name">Nome</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" autocomplete="name" autofocus required>
                     @error('name') <p class="field-error">{{ $message }}</p> @enderror
-                </div>
-
-                <div class="field {{ $errors->has('email') ? 'has-error' : '' }}">
-                    <label for="email">E-mail</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" required>
-                    @error('email') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="field {{ $errors->has('id_guilda') ? 'has-error' : '' }}">
