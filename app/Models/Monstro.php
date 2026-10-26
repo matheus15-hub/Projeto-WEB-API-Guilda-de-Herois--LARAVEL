@@ -24,7 +24,7 @@ class Monstro extends Model
 {
 	protected $table = 'monstro';
 	protected $primaryKey = 'monstro_id';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [
