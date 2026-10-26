@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AventureiroRequest;
+use App\Http\Requests\AventureiroUpdateRequest;
 use App\Services\AventureiroService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class AventureiroController extends Controller
     }
 
 
-    public function update(int $id, AventureiroRequest $request) : JsonResponse
+    public function update(int $id, AventureiroUpdateRequest $request) : JsonResponse
     {
         $avent = $this->aventureiroService->updateAventureiroById($id , $request->validated());
         return response()->json($avent, 200);

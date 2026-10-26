@@ -24,7 +24,7 @@ class Guilda extends Model
 {
 	protected $table = 'guilda';
 	protected $primaryKey = 'guilda_id';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

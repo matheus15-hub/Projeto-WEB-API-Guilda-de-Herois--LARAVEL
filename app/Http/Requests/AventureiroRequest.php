@@ -21,7 +21,8 @@ class AventureiroRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
+    {   
+       
         return [
             
             'nome' => [
@@ -30,6 +31,16 @@ class AventureiroRequest extends FormRequest
                 'min:4',
                 'max:150',
                 "regex:/^[\p{L}\s'-]+$/u",
+            ],
+            'idade'=> [
+                'required',
+                'integer',
+                'min:14'
+            ],
+            'experiencia'=>[
+                'required',
+                'integer',
+                'min:0'
             ],
 
             'id_classe' => [
@@ -45,6 +56,7 @@ class AventureiroRequest extends FormRequest
                 'min:1',
                 'exists:guilda,guilda_id',
             ],
+
         ];
         
     }

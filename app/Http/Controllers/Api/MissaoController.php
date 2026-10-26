@@ -3,47 +3,47 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MissaoRequest;
+use App\Services\MissaoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MissaoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    
+    public function __construct(private MissaoService $missao_service){}
+  
+
+    public function index() : JsonResponse
     {
-        //
+        $missao = $this->missao_service->getMissaoAll();
+        return response()->json($missao);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+ 
+    public function store(MissaoRequest $request) : JsonResponse
     {
-        //
+        $missao = $this->missao_service->createMissao($request->validated());
+        return response()->json($missao,201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+  
+    public function show(int $id) : JsonResponse
     {
-        //
+        return response()->json($this->missao_service->getMissaoById($id));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(int $id, MissaoRequest $request) : JsonResponse
     {
-        //
+        $missao = $this->missao_service->updateMissaoById($id, $request->validated());
+        return response()->json($missao);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function destroy(int $id) : JsonResponse
     {
-        //
+        $this->missao_service->deleteMissaoById($id);
+        return response()->json([
+        'mensagem' => "Missao {$id} foi deletada"]);
     }
 }
