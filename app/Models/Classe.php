@@ -25,7 +25,7 @@ class Classe extends Model
 {
 	protected $table = 'classe';
 	protected $primaryKey = 'classe_id';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

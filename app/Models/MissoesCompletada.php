@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class MissoesCompletada extends Model
 {
 	protected $table = 'missoes_completadas';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

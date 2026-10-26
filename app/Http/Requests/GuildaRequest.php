@@ -21,10 +21,11 @@ class GuildaRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
+    {   
+        $regra = $this->isMethod('post') ? "required" : "sometimes";
         return [
             'nome' => [
-                'required',
+                $regra,
                 'string',
                 'min:4',
                 'max:150',

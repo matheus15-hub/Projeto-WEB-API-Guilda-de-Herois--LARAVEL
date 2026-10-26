@@ -20,7 +20,7 @@ class ClasseService{
 
         $classe->save();
 
-        return $classe;
+        return $classe->refresh();
     }
 
 
@@ -41,9 +41,17 @@ class ClasseService{
     {
         $classe = $this->getClasseById($id);
 
-        $classe->classe_nome = $dados['nome'];
-        $classe->descricao = $dados['descricao'];
-        $classe->raridade = $dados['raridade'];
+        if(isset($dados['nome'])){
+            $classe->classe_nome = $dados['nome'];
+            }
+        if(isset($dados['descricao'])){
+
+            $classe->descricao = $dados['descricao'];
+            }
+        if(isset($dados['raridade'])){
+
+            $classe->raridade = $dados['raridade'];
+        }
 
         $classe->save();
 
