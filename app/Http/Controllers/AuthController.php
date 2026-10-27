@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegistroRequest;
+use App\Models\Guilda;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+
+
 
 class AuthController extends Controller
 {
-    public function showRegister()
+    public function showRegister(): View
     {
-        return view('auth.register');
+        return view('auth.registro', [
+            'guildas' => Guilda::orderBy('guilda_nome')->get(),
+        ]);
     }
 
-    public function register(Request $request)
+    public function register(RegistroRequest $request): RedirectResponse
     {
-        $dados = $request->validate([
-            'name' => 'required|string|max:255|unique:users,name',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $dados['name'],
-            'password' => Hash::make($dados['password']),
-        ]);
+        $user = User::create($request->validated());
 
         Auth::login($user);
         $request->session()->regenerate();
@@ -32,32 +33,27 @@ class AuthController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function showLogin()
+    public function showLogin(): View
     {
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request): RedirectResponse
     {
-        $credenciais = $request->validate([
-            'name' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        $credenciais = $request->only('name', 'password');
 
-        if (Auth::attempt($credenciais)) {
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard'));
+        if (! Auth::attempt($credenciais, $request->boolean('remember'))) {
+            throw ValidationException::withMessages([
+                'name' => 'Nome ou senha incorretos.',
+            ]);
         }
 
-        return back()
-            ->withErrors([
-                'name' => 'Nome ou senha inválidos.',
-            ])
-            ->onlyInput('name');
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard'));
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 
