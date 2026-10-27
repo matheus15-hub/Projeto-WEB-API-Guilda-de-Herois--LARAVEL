@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'password'])]
+#[Fillable(['name', 'email', 'password', 'id_guilda'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -21,4 +22,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        public function guilda(): BelongsTo
+    {
+        return $this->belongsTo(Guilda::class, 'id_guilda', 'guilda_id');
+    }
 }
+
