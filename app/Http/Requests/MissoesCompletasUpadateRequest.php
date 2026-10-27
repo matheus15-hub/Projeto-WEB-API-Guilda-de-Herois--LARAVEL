@@ -40,8 +40,8 @@ class MissoesCompletasUpadateRequest extends FormRequest
             $campos_recebidos = array_keys($this->all());
 
             $campos_invalidos = array_diff(
-                $campos_permetidos,
-                $campos_recebidos
+                $campos_recebidos,
+                $campos_permetidos
             );
 
             foreach($campos_invalidos as $campos){

@@ -25,7 +25,7 @@ class MissoesCompletasRequest extends FormRequest
                 'required',
                 'integer',
                 'min:1',
-                'exists:missoa,missao_id'
+                'exists:missao,missao_id'
             ],
             'id_aventureiro'=>[
                 'required',

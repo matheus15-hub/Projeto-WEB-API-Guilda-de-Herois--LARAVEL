@@ -19,3 +19,7 @@ Route::apiResource('monstro', MonstroController::class);
 Route::apiResource('missao',MissaoController::class);
 
 Route::apiResource('missoes_completas', MissoesCompletadasController::class);
+
+Route::get( 'missoes_completas/{idAve}/{idMissao}', [MissoesCompletadasController::class, 'show']);
+Route::put('missoes_completas/{idAve}/{idMissao}',   [MissoesCompletadasController::class, 'update']);
+Route::delete('/missoes_completas/{idAventureiro}/{idMissao}',[MissoesCompletadasController::class, 'destroy']);

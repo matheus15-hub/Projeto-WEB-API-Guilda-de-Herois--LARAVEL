@@ -12,9 +12,12 @@ use Illuminate\Http\Request;
 class MissoesCompletadasController extends Controller
 {
     public function __construct(private MissoesCompletadasService $missoes_completadas) {}
-    public function index() : JsonResponse
-    {
-        $missao = $this->missoes_completadas->getMissoesCompletasAll();
+    public function index(Request $request) : JsonResponse
+    {   
+        $porPagina = $request->integer('per_page',10);
+
+        $porPagina = min(max($porPagina,1),200);
+        $missao = $this->missoes_completadas->getMissoesCompletasAll($porPagina);
         return response()->json($missao);
     }
 
@@ -41,7 +44,7 @@ class MissoesCompletadasController extends Controller
     {
         $missao = $this->missoes_completadas->deleteMissaoAventureiroById($idMisso, $idAve);
         return response()->json([
-            'mensagem' => 'Deletação concluida de missoes_completas das chaves {$idMissao} , {$idAven}'
+            'mensagem' => "Deletação concluida de missoes_completas das chaves {$idMisso} (MISSAO) , {$idAve} (AVENTUREIRO)"
             ]
         );
     }

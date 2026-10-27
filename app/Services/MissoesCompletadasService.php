@@ -13,31 +13,36 @@ class MissoesCompletadasService{
         private AventureiroService $aventureiro_service
         ) {}
         
-        public function createMissaoCompleta(array $dados): MissoesCompletada
+        public function createMissaoCompleta(array $dados)
         {
-            $missaoCompleta = new MissoesCompletada();
-            
-            $missaoCompleta->id_aventureiro = $dados['id_aventureiro'];
-            $missaoCompleta->id_missao = $dados['id_missao'];
-            
+            $this->aventureiro_service->getAventureiroByID($dados['id_aventureiro']);
+
             $missao = $this->missaoService->getMissaoById(
-                $missaoCompleta->id_missao
-                );
-                
-                $monstro = $this->monstroService->getMonstroById(
-                    $missao->id_monstro
-                    );
+            $dados['id_missao']
+            );
+
+            $monstro = $this->monstroService->getMonstroById(
+                $missao->id_monstro
+            );
+
+            $xp = $monstro->drop_xp * $missao->quantidade_monstro;
+
+            DB::table('missoes_completadas')->insert([
+                'id_aventureiro' => $dados['id_aventureiro'],
+                'id_missao' => $dados['id_missao'],
+                'ouro_recebido' => $missao->recompensa_ouro,
+                'xp_recebido' => $xp,
+            ]);
+
+            return [
+                'id_aventureiro' => $dados['id_aventureiro'],
+                'id_missao' => $dados['id_missao'],
+                'ouro_recebido' => $missao->recompensa_ouro,
+                'xp_recebido' => $xp,
+            ];
                     
-                    $xp = $monstro->drop_xp * $missao->quantidade_monstro;
-                    
-                    $missaoCompleta->ouro_recebido = $missao->recompensa_ouro;
-                    $missaoCompleta->xp_recebido = $xp;
-                    
-                    $missaoCompleta->save();
-                    
-                    return $missaoCompleta;
         }
-        public function getMissoesCompletasAll()
+        public function getMissoesCompletasAll(int $porpagina=10)
         {
             $missoes = DB::table('missoes_completadas as mc')
                 ->join('missao as m', 'm.missao_id', '=', 'mc.id_missao')
@@ -55,7 +60,7 @@ class MissoesCompletadasService{
                     'a.aventureiro_nome as aventureiro',
                     'cl.classe_nome as classe'
                 )
-                ->get();
+                ->paginate($porpagina);
 
             return $missoes;
         }
@@ -79,7 +84,7 @@ class MissoesCompletadasService{
                     'cl.classe_nome as classe'
                 )
                 ->where('mc.id_aventureiro', '=', $idAve)
-                ->orwhere('mc.id_missao', '=', $idMissao)
+                ->  where('mc.id_missao', '=', $idMissao)
                 ->get();
 
             return $missoes;
@@ -91,33 +96,26 @@ class MissoesCompletadasService{
             $this->missaoService->getMissaoById($idMissao);
             $this->aventureiro_service->getAventureiroByID($idAve);
             
-           $dadosatualizados = [];
-           if(isset($dados['id_aventureiro'])){
-            $dadosatualizados['id_avetureiro'] = $dados['id_aventureiro'];
-           }
-            if(empty($dadosatualizados)){
-                return 0;
-            }
+           DB::table('missoes_completadas')
+            ->where('id_aventureiro', $idAve)
+            ->where('id_missao', $idMissao)
+            ->update([
+                'id_aventureiro' => $dados['id_aventureiro']
+            ]);
 
-            //atualizando
-            DB::table('missoes_completas')
-            ->where('mc.id_aventureiro', '=', $idAve)
-            ->where('mc.id_missao', '=', $idMissao)
-            ->update($dadosatualizados);
-
-                    
-            return DB::table('missoes_completas')
-            ->where('mc.id_aventureiro', '=', $idAve)
-            ->where('mc.id_missao', '=', $idMissao)
+        
+        return DB::table('missoes_completadas')
+            ->where('id_aventureiro', $dados['id_aventureiro'])
+            ->where('id_missao', $idMissao)
             ->first();
         }
 
         public function deleteMissaoAventureiroById(int $idMissao, int $idAve){
             $this->missaoService->getMissaoById($idMissao);
             $this->aventureiro_service->getAventureiroByID($idAve);
-            DB::table('missoes_completas')
-            ->where('mc.id_aventureiro', '=', $idAve)
-            ->where('mc.id_missao', '=', $idMissao)
+            DB::table('missoes_completadas')
+            ->where('id_aventureiro', '=', $idAve)
+            ->where('id_missao', '=', $idMissao)
             ->delete();
 
         }
