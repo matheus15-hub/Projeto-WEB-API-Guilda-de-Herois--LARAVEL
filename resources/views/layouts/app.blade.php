@@ -12,7 +12,9 @@
 <body>
     @auth
         <header class="topbar">
-            <a class="brand" href="{{ route('dashboard') }}">Guilda dos Heróis</a>
+            <nav class="nav" aria-label="Principal">
+                <a href="{{ route('dashboard') }}">Painel</a>
+            </nav>
             <div class="who">
                 <span>{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
