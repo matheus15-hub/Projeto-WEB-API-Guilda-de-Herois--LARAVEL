@@ -39,14 +39,23 @@ class AventureiroController extends Controller
 
 
     public function update(int $id, AventureiroUpdateRequest $request) : JsonResponse
-    {
-        $avent = $this->aventureiroService->updateAventureiroById($id , $request->validated());
-        return response()->json($avent, 200);
+    {   
+        $aventAntigo = $this->aventureiroService->getAventureiroByID($id);
+        $aventAtualizado = $this->aventureiroService->updateAventureiroById($id , $request->validated());
+        return response()->json([
+            'message' => "Cadastro atualizado com sucesso!",
+            'cadastro antigo' => $aventAntigo,
+            'cadastro atualizado' => $aventAtualizado
+        ], 200);
     }
 
     public function destroy(int $id) : JsonResponse
     {
-        $avent = $this->aventureiroService->deleteAventureiroById($id);
-        return response()->json(null,204);
+        $avent = $this->aventureiroService->getAventureiroByID($id);
+        $this->aventureiroService->deleteAventureiroById($id);
+        return response()->json([
+            'message' => 'Cadastro deletado com sucesso!',
+            'cadastro deletado' => $avent
+        ],200);
     }
 }

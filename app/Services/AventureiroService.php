@@ -2,60 +2,35 @@
 
 namespace App\Services;
 
+use App\Interfaces\AventureiroRepositoryInterface;
 use App\Models\Aventureiro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class AventureiroService{
 
+    public function __construct(private AventureiroRepositoryInterface $repository){}
 
-    public function createAventureiro(array $dados) : Aventureiro{
-
-        $aventureiro = new Aventureiro();
-
-        $aventureiro->aventureiro_nome = $dados['nome'];
-        $aventureiro->idade = $dados['idade'];
-        $aventureiro->experiencia= $dados['experiencia'];
-        $aventureiro->ouro = $dados['ouro'];
-        $aventureiro->id_classe = $dados['id_classe'];
-        $aventureiro->id_guilda = $dados['id_guilda'];
-
-        $aventureiro->save();
-
-        return $aventureiro->refresh();
+    public function createAventureiro(array $dados) 
+    {
+        return $this->repository->create($dados);
     }
 
-    public function getAventureiroByID(int $id) : Aventureiro {
-        return  Aventureiro::findOrFail($id);
+    public function getAventureiroByID(int $id)
+    {
+        return  $this->repository->findById($id);
     }
     public function getAventureiroAll() : Collection 
     {
-        return Aventureiro::all();
+        return $this->repository->all();
     }
-    public function updateAventureiroById(int $id , array $dados) : Aventureiro
+    public function updateAventureiroById(int $id , array $dados)
     {   
-        $aventureiro = $this->getAventureiroByID($id);
-        if(isset($dados['nome'])){
-            $aventureiro->aventureiro_nome = $dados['nome'];
-        }
-        if(isset($dados['idade'])){
-            $aventureiro->idade= $dados['idade'];
-        }
-        if(isset($dados['id_classe'])){
-            $aventureiro->id_classe = $dados['id_classe'];
-            }
-        if(isset($dados['id_guilda'])){
-            $aventureiro->id_guilda = $dados['id_guilda'];
-            }   
-
-        $aventureiro ->save();
-
-        return $aventureiro->refresh();
+        return $this->repository->upadate($id,$dados);
     }
 
     public function deleteAventureiroById(int $id) : void
     {
-        $aventureiro = $this->getAventureiroByID($id);
-        $aventureiro->delete();
+         $this->repository->delete($id);
     }
 
 }
