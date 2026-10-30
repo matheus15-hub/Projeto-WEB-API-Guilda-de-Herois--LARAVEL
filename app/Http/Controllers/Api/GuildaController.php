@@ -35,13 +35,22 @@ class GuildaController extends Controller
 
     public function update(int $id , GuildaRequest $request): JsonResponse
     {
-        $guilda = $this->guildaService->updateGuildaById($id, $request->validated());
-        return response()->json($guilda, 204);
+        $guidaAntiga = $this->guildaService->getGuildaById($id);
+        $guildaAtualizada = $this->guildaService->updateGuildaById($id, $request->validated());
+        return response()->json([
+            'message' => "Cadastro alterado com sucesso!",
+            'cadastro Antigo' => $guidaAntiga,
+            'cadastro Atualizado' => $guildaAtualizada
+        ], 200);
     }
 
     public function destroy(string $id) : JsonResponse
     {
+        $guida= $this->guildaService->getGuildaById($id);
         $this->guildaService->deleteGuildaById($id);
-        return response()->json(null, 204 );
+        return response()->json([
+            'message' => "Cadastro {$id} foi deletado",
+            'cadastro deletado' => $guida
+        ], 200 );
     }
 }

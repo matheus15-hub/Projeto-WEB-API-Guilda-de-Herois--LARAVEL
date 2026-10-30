@@ -44,8 +44,8 @@ class ClasseController extends Controller
         $classeAtualizada = $this->classeService->updateClasseById($id, $request->validated());
         return response()->json([
             'message' => "Cadastro {$id} foi alterado com sucesso!",
-            'antes' => $classeAntiga,
-            'depois'=>$classeAtualizada],200);
+            'cadastro antigo' => $classeAntiga,
+            'cadastro atualizado'=>$classeAtualizada],200);
     }
 
     public function destroy(int $id) : JsonResponse
@@ -54,7 +54,7 @@ class ClasseController extends Controller
         $this->classeService->deleteClasseById($id);
         return response()->json([
         'message' => "Classe foi deletada com sucesso",
-        'Classe deletada' => $classe
+        'cadastro deletado' => $classe
         ], 200);
     }
 }

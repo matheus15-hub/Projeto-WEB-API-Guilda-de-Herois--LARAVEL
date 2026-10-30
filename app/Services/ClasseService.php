@@ -31,12 +31,14 @@ class ClasseService{
   
     public function updateClasseById(int $id, array $dados)
     {
-      return $this->repository->update($id, $dados);
+        $this->getClasseById($id);
+        return $this->repository->update($id, $dados);
     }
 
 
     public function deleteClasseById(int $id) 
     {
-        return $this->repository->delete($id);
+        $this->getClasseById($id);
+        $this->repository->delete($id);
     }
 }

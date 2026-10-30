@@ -2,51 +2,36 @@
 
 namespace App\Services;
 
-use App\Interfaces\ClasseRepositoryInterface;
+use App\Interfaces\GuildaRepositoryInterface;
 use App\Models\Guilda;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class GuildaService{
     
-
-    public function createGuilda(array $dados) : Guilda
+    public function __construct(private GuildaRepositoryInterface $repository){ }
+    public function createGuilda(array $dados)  
     {
-        $guilda = new Guilda();
-
-        $guilda->guilda_nome = $dados['nome'];
-        $guilda->lema = $dados['lema'];
-        
-        $guilda->save();
-        return  $guilda->refresh();
+        return $this->repository->create($dados);
     }
 
-    public function getGuildaById(int $id) : Guilda
+    public function getGuildaById(int $id) 
     {
         return Guilda::findOrFail($id);
     }
 
     public function getGuildaAll() : Collection
     {
-        return Guilda::all();
+        return $this->repository->all();
     }
 
-    public function updateGuildaById(int $id , array $dados) : Guilda
+    public function updateGuildaById(int $id , array $dados) 
     {
-        $guilda = $this->getGuildaById($id);
-
-        if(isset($dados['nome'])){
-
-            $guilda->guilda_nome = $dados['nome'];
-        }
-        if(isset($dados['lema']))
-        $guilda->lema = $dados['lema'];
-
-        $guilda->save();
-        return  $guilda;
+        return $this->repository->update($id, $dados);
     }
 
-    public function deleteGuildaById(int $id) : void{
-        $guilda = $this->getGuildaById($id);
-        $guilda->delete();
+    public function deleteGuildaById(int $id)
+    {
+        $this->getGuildaById($id);
+        $this->repository->delete($id);
     }
 }
