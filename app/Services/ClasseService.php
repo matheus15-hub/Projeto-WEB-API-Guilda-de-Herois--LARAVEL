@@ -3,64 +3,40 @@
 namespace App\Services;
 
 use App\Enums\Raridade;
+use App\Interfaces\ClasseRepositoryInterface;
 use App\Models\Classe;
 use Doctrine\DBAL\Query\From;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class ClasseService{
     
+    public function __construct(private ClasseRepositoryInterface $repository){}
 
-    public function createClasse(array $dados): Classe
+    public function createClasse(array $dados)
     {
-        $classe = new Classe();
-
-        $classe->classe_nome = $dados['nome'];
-        $classe->descricao = $dados['descricao'];
-        $classe->raridade = $dados['raridade'];
-
-        $classe->save();
-
-        return $classe->refresh();
+        return $this->repository->create($dados);
     }
 
 
-    public function getClasseById(int $id) : Classe{
-
-    //o findOrFail lança uma erro caso não encontre o id
-    return Classe::findOrFail($id);
-
+    public function getClasseById(int $id) 
+    {
+        return $this->repository->findById($id);
     }
 
     public function getClasseAll() : Collection
     {
-        return Classe::all();
+        return $this->repository->findAll();
     }
 
   
-    public function updateClasseById(int $id, array $dados): Classe
+    public function updateClasseById(int $id, array $dados)
     {
-        $classe = $this->getClasseById($id);
-
-        if(isset($dados['nome'])){
-            $classe->classe_nome = $dados['nome'];
-            }
-        if(isset($dados['descricao'])){
-
-            $classe->descricao = $dados['descricao'];
-            }
-        if(isset($dados['raridade'])){
-
-            $classe->raridade = $dados['raridade'];
-        }
-
-        $classe->save();
-
-        return $classe;
+      return $this->repository->update($id, $dados);
     }
 
 
-    public function deleteClasseById(int $id) : void {
-        $classe = Classe::findOrFail($id);
-        $classe->delete();
+    public function deleteClasseById(int $id) 
+    {
+        return $this->repository->delete($id);
     }
 }

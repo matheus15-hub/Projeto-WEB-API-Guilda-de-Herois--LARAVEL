@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Interfaces\ClasseRepositoryInterface;
 use App\Models\Guilda;
 use Illuminate\Database\Eloquent\Collection;
 
 class GuildaService{
+    
 
     public function createGuilda(array $dados) : Guilda
     {
