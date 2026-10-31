@@ -44,4 +44,19 @@ class GuildaController extends Controller
         $this->guildaService->deleteGuildaById($id);
         return response()->json(null, 204 );
     }
+    public function ouro(int $idGuilda): JsonResponse{
+        $total = $this->guildaService->calcularOuroGuilda($idGuilda);
+
+        return response()->json([
+            'id_guilda' => $idGuilda,
+            'ouro_total' => $total
+        ]);
+    }
+
+    public function missoesCompletadas(int $idGuilda): JsonResponse{
+        $missoes = $this->guildaService
+            ->listarMissoesCompletadasGuilda($idGuilda);
+
+        return response()->json($missoes);
+    }
 }

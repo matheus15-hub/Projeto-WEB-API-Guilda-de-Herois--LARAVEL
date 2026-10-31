@@ -65,21 +65,16 @@ class AventureiroService implements AventureiroInterface{
         $aventureiro->delete();
     }
 
-    // Consulta uma function do PostgreSQL
-    public function calcularOuroGuilda(int $idGuilda): int{
-        $resultado = DB::selectOne(
-            'select fn_calcular_ouro_recebido(?) as total',
-            [$idGuilda]
-        );
-
-        return (int) $resultado->total;
-    }
-
-    // Consulta outra function do PostgreSQL
-    public function listarMissoesCompletadasGuilda(int $idGuilda){
-        return DB::select(
-            'select * from fn_listar_missoes_completadas(?)',
-            [$idGuilda]
+    public function transferirAventureiro(
+        int $idAventureiro,
+        ?int $novaGuildaId
+    ): void {
+        DB::statement(
+            'CALL pr_transferir_aventureiro(?, ?)',
+            [
+                $idAventureiro,
+                $novaGuildaId
+            ]
         );
     }
 }

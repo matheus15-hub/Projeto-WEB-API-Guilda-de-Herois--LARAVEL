@@ -23,4 +23,6 @@ interface AventureiroInterface
     public function calcularOuroGuilda(int $idGuilda): int;
 
     public function listarMissoesCompletadasGuilda(int $idGuilda);
+
+    public function transferirAventureiro(int $idAventureiro,?int $novaGuildaId): void;
 }
