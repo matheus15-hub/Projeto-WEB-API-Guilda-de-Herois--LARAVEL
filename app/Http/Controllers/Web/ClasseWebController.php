@@ -45,7 +45,7 @@ class ClasseWebController extends Controller
             ]);
     }
 
-    public function update(ClasseRequest $request, Classe $classe): RedirectResponse
+    public function update(ClasseWebRequest $request, Classe $classe): RedirectResponse
     {
             $dados = $request->validated();
 

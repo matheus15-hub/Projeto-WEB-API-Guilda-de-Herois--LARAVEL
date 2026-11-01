@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\MissoesCompletada;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Models\Missao;
 
 class MissoesCompletadasService{
 

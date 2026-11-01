@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Aventureiro;
+use App\Models\Missao;
+use App\Services\MissoesCompletadasService;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class MissaoWebController extends Controller
 {
-    public function __construct(private MissaoCompletadasService $missaoCompletadas)
+    public function __construct(private MissoesCompletadasService $missoesCompletadas)
     {
-        // XD
+        //XD
     }
 
     public function index(): View
