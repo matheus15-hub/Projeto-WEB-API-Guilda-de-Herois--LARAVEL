@@ -14,6 +14,9 @@
         <header class="topbar">
             <nav class="nav" aria-label="Principal">
                 <a href="{{ route('dashboard') }}">Painel</a>
+                <a href="{{ route('aventureiros.index') }}">Aventureiros</a>
+                <a href="{{ route('classes.index') }}">Classes</a>
+                <a href="{{ route('missoes.index') }}">Missões</a>
             </nav>
             <div class="who">
                 <span>{{ auth()->user()->name }}</span>
