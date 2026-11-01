@@ -121,7 +121,36 @@ class MissoesCompletadasService{
 
         }
 
+        public function createVariasMissoesCompletas(int $idAventureiro, array $idsMissao): int
+        {
+            $this->aventureiro_service->getAventureiroByID($idAventureiro);
+            
+            $jaFez = DB::table('missoes_completadas')
+                ->where('id_aventureiro', $idAventureiro)
+                ->whereIn('id_missao', $idsMissao)
+                ->pluck('id_missao')
+                ->all();
 
+            $novos = array_values(array_diff($idsMissao, $jaFez));
+
+            if (empty($novos)) {
+                return 0;
+            }
+
+            $missoes = Missao::with('monstro')->whereIn('missao_id', $novos)->get();
+
+            $linhas = $missoes->map(fn ($m) => [
+                'id_aventureiro' => $idAventureiro,
+                'id_missao'      => $m->missao_id,
+                'ouro_recebido'  => $m->recompensa_ouro,
+                'xp_recebido'    => ($m->monstro->drop_xp ?? 0) * $m->quantidade_monstro,
+            ])->all();
+
+            // 1 insert só para todas
+            DB::table('missoes_completadas')->insert($linhas);
+
+            return count($linhas);
+        }
 
 
 }

@@ -14,36 +14,58 @@ use Illuminate\View\View;
 class AventureiroWebController extends Controller
 {
     public function index(Request $request): View
-{
-    $aventureiros = Aventureiro::with('classe')
-        ->where('id_guilda', $this->guildaId($request))
-        ->when($request->filled('busca'), fn ($q) => $q->where(
-            'aventureiro_nome', 'ilike', '%' . $request->input('busca') . '%'
-        ))
-        ->orderBy('aventureiro_nome')
-        ->paginate(25)
-        ->withQueryString();
-
-    $classes = Classe::orderBy('classe_nome')->get();
-
-    return view('aventureiros.index', compact('aventureiros', 'classes'));
-}
-
-    public function store(AventureiroWebRequest $request): RedirectResponse
     {
-        $dados = $request->validated();
+        $aventureiros = Aventureiro::with('classe')
+            ->where('id_guilda', $this->guildaId($request))
+            ->when($request->filled('busca'), fn ($q) => $q->where(
+                'aventureiro_nome', 'ilike', '%' . $request->input('busca') . '%'
+            ))
+            ->orderBy('aventureiro_nome')
+            ->paginate(25)
+            ->withQueryString();
 
-        $aventureiro = Aventureiro::create([
-            'aventureiro_nome' => $dados['nome'],
-            'idade' => $dados['idade'],
-            'experiencia' => $dados['experiencia'] ?? 0,
-            'ouro' => $dados['ouro'] ?? 0,
-            'id_classe' => $dados['id_classe'],
-            'id_guilda' => $this->guildaId($request),
-        ]);
+        $classes = Classe::orderBy('classe_nome')->get();
+
+        return view('aventureiros.index', compact('aventureiros', 'classes'));
+    }
+
+    public function store(Request $request, Aventureiro $aventureiro): RedirectResponse
+    {
+        $this->daMinhaGuilda($request, $aventureiro);
+
+        $dados = $request->validate(
+            [
+                'missoes'   => ['required', 'array', 'min:1'],
+                'missoes.*' => ['integer', 'distinct'],
+            ],
+            [
+                'missoes.required' => 'Selecione pelo menos uma missão.',
+                'missoes.min'      => 'Selecione pelo menos uma missão.',
+            ]
+        );
+
+        $ids = array_map('intval', $dados['missoes']);
+
+        // 1 consulta para conferir que todas existem (antes eram N)
+        if (Missao::whereIn('missao_id', $ids)->count() !== count($ids)) {
+            return back()->with('erro', 'Uma das missões selecionadas não existe.');
+        }
+
+        try {
+            $total = DB::transaction(fn () =>
+                $this->missoesCompletadas->createVariasMissoesCompletas(
+                    $aventureiro->aventureiro_id,
+                    $ids
+                )
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('erro', 'Não foi possível vincular as missões. Nenhuma alteração foi salva.');
+        }
 
         return redirect()->route('aventureiros.missoes.index', $aventureiro)
-            ->with('sucesso', 'Aventureiro cadastrado. Agora você pode vincular missões a ele.');
+            ->with('sucesso', $total . ($total === 1 ? ' missão vinculada.' : ' missões vinculadas.'));
     }
 
     public function show(Request $request, Aventureiro $aventureiro): View

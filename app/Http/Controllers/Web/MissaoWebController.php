@@ -31,7 +31,6 @@ class MissaoWebController extends Controller
         $guildaId = $this->guildaId($request);
         $missao->load('monstro');
 
-        // Aventureiros DA MINHA GUILDA que concluíram esta missão.
         $concluidas = DB::table('missoes_completadas as mc')
             ->join('aventureiro as a', 'a.aventureiro_id', '=', 'mc.id_aventureiro')
             ->where('mc.id_missao', $missao->missao_id)
@@ -39,7 +38,6 @@ class MissaoWebController extends Controller
             ->orderBy('a.aventureiro_nome')
             ->get(['a.aventureiro_id', 'a.aventureiro_nome', 'mc.ouro_recebido', 'mc.xp_recebido']);
 
-        // Aventureiros da minha guilda que ainda podem receber a missão.
         $disponiveis = Aventureiro::where('id_guilda', $guildaId)
             ->whereNotIn('aventureiro_id', $concluidas->pluck('aventureiro_id'))
             ->orderBy('aventureiro_nome')
