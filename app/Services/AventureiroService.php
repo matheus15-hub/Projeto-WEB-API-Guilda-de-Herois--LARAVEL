@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AventureiroService implements AventureiroInterface{
+
+    public function __construct(private GuildaService $guildaService) {
+
+
+    }
+
     public function createAventureiro(array $dados): Aventureiro{
         $aventureiro = new Aventureiro();
 
@@ -65,6 +71,14 @@ class AventureiroService implements AventureiroInterface{
         $aventureiro->delete();
     }
 
+    public function calcularOuroGuilda(int $idGuilda): int {
+        return $this->guildaService->calcularOuroGuilda($idGuilda);
+    }
+
+    public function listarMissoesCompletadasGuilda(int $idGuilda)
+    {
+        return $this->guildaService->listarMissoesCompletadasGuilda($idGuilda);
+    }
     public function transferirAventureiro(
         int $idAventureiro,
         ?int $novaGuildaId

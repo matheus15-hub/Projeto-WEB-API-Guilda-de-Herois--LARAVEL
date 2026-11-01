@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Guilda;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class GuildaService{
 
