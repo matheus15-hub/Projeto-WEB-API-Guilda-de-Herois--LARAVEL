@@ -2,54 +2,38 @@
 
 namespace App\Services;
 
+use App\Interfaces\MonstroRepositoryInterface;
 use App\Models\Monstro;
 use Illuminate\Database\Eloquent\Collection;
 
-class MonstroService{
+class MonstroService
+{
+    public function __construct(
+        private MonstroRepositoryInterface $repository
+    ) {}
 
-
-    public function createMonstro(array $dados) : Monstro
+    public function createMonstro(array $dados): Monstro
     {
-        $monstro = new Monstro();
-
-        $monstro->monstro_nome = $dados['nome'];
-        $monstro->drop_xp = $dados['drop_xp'];
-
-        $monstro->save();
-
-        return $monstro->refresh();
+        return $this->repository->create($dados);
     }
 
-    public function getMonstroById(int $id) : Monstro
+    public function getMonstroById(int $id): Monstro
     {
-        return Monstro::findOrFail($id);    
-   }
-   public function getMonstroAll() : Collection {
-        return Monstro::all();
-   }
-   public function updateMonstroById(int $id , array $dados) : Monstro
-   {
-        $monstro = $this->getMonstroById($id);
-        
-        // isset ele diz que pode ou não ser nulo, se for nulo ele não entra no if
-        // mas se não for nulo ai entra no if
-        // isso faz com que no update não é necessario colocar todos os paramentros
-        // apenas aquele que serão atualizados.
-        if(isset($dados['nome'])){
-            $monstro->monstro_nome = $dados['nome'];
-        }
-        if(isset($dados['drop_xp'])){
-            $monstro->drop_xp = $dados['drop_xp'];
-        }
+        return $this->repository->findById($id);
+    }
 
-        $monstro->save();
+    public function getMonstroAll(): Collection
+    {
+        return $this->repository->all();
+    }
 
-        return $monstro;
-   }
+    public function updateMonstroById(int $id, array $dados): Monstro
+    {
+        return $this->repository->update($id, $dados);
+    }
 
-   public function deleteMonstroById(int $id) : void
-   {
-         $monstro = $this->getMonstroById($id);
-         $monstro->delete();    
-   }
-}   
+    public function deleteMonstroById(int $id): void
+    {
+        $this->repository->delete($id);
+    }
+}
