@@ -31,10 +31,9 @@ class AppServiceProvider extends ServiceProvider
             GuildaRepository::class
         );
 
-        $this->app->bind(
-            AventureiroRepositoryInterface::class,
-            AventureiroRepository::class
-        );
+        $this->app->bind(AventureiroInterface::class,
+         AventureiroService::class);
+
          $this->app->bind(
             MissoesCompletadasRepositoryInterface::class,
             MissoesCompletadasRepository::class
