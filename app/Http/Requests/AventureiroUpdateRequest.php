@@ -53,6 +53,32 @@ class AventureiroUpdateRequest extends FormRequest
          
         ];
     }
+
+     public function messages(): array
+    {
+        return [
+            // Nome
+            'nome.string' => 'O nome deve ser um texto.',
+            'nome.min' => 'O nome deve possuir pelo menos 4 caracteres.',
+            'nome.max' => 'O nome não pode ultrapassar 150 caracteres.',
+            'nome.regex' => 'O nome possui caracteres inválidos.',
+
+            // Idade
+            'idade.integer' => 'A idade deve ser um número inteiro.',
+            'idade.min' => 'O aventureiro deve ter pelo menos 14 anos.',
+
+            // Classe
+            'id_classe.integer' => 'O ID da classe deve ser um número inteiro.',
+            'id_classe.min' => 'O ID da classe deve ser maior que zero.',
+            'id_classe.exists' => 'A classe informada não existe.',
+
+            // Guilda
+            'id_guilda.integer' => 'O ID da guilda deve ser um número inteiro.',
+            'id_guilda.min' => 'O ID da guilda deve ser maior que zero.',
+            'id_guilda.exists' => 'A guilda informada não existe.',
+        ];
+    }
+
     // vamos vereficar se algum parametro que não deve ser alterado esta sendo alterado
     //caso esteja vamos retornar um nome falando o nome do parametro e que não pode ser alterado
     public function withValidator(Validator $validator) :void
