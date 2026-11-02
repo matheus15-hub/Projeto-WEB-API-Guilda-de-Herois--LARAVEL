@@ -9,6 +9,10 @@ use App\Repositories\AventureiroRepository;
 use App\Repositories\ClasseRepository;
 use App\Repositories\GuildaRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Interfaces\AventureiroInterface;
+use App\Interfaces\MissoesCompletadasRepositoryInterface;
+use App\Repositories\MissoesCompletadasRepository;
+use App\Services\AventureiroService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AventureiroRepositoryInterface::class,
             AventureiroRepository::class
+        );
+         $this->app->bind(
+            MissoesCompletadasRepositoryInterface::class,
+            MissoesCompletadasRepository::class
         );
     }
 

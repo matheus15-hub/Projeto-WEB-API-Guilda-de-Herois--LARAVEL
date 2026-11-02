@@ -12,7 +12,12 @@
 <body>
     @auth
         <header class="topbar">
-            <a class="brand" href="{{ route('dashboard') }}">Guilda dos Heróis</a>
+            <nav class="nav" aria-label="Principal">
+                <a href="{{ route('dashboard') }}">Painel</a>
+                <a href="{{ route('aventureiros.index') }}">Aventureiros</a>
+                <a href="{{ route('classes.index') }}">Classes</a>
+                <a href="{{ route('missoes.index') }}">Missões</a>
+            </nav>
             <div class="who">
                 <span>{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">

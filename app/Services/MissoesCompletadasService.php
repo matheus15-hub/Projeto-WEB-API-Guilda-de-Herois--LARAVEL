@@ -4,13 +4,18 @@ namespace App\Services;
 use App\Models\MissoesCompletada;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Models\Missao;
+use App\Interfaces\MissoesCompletadasRepositoryInterface;
+use App\Models\Aventureiro;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MissoesCompletadasService{
 
     public function __construct(
-        private MissaoService $missaoService,
-        private MonstroService $monstroService,
-        private AventureiroService $aventureiro_service
+            private MissaoService $missaoService,
+            private MonstroService $monstroService,
+            private AventureiroService $aventureiro_service,
+            private MissoesCompletadasRepositoryInterface $repository
         ) {}
         
         public function createMissaoCompleta(array $dados)
@@ -110,7 +115,8 @@ class MissoesCompletadasService{
             ->first();
         }
 
-        public function deleteMissaoAventureiroById(int $idMissao, int $idAve){
+        public function deleteMissaoAventureiroById(int $idMissao, int $idAve)
+        {
             $this->missaoService->getMissaoById($idMissao);
             $this->aventureiro_service->getAventureiroByID($idAve);
             DB::table('missoes_completadas')
@@ -120,7 +126,38 @@ class MissoesCompletadasService{
 
         }
 
+        public function createVariasMissoesCompletas(int $idAventureiro, array $idsMissao): int
+        {
+            if (! $this->repository->aventureiroExiste($idAventureiro)) {
+                throw (new ModelNotFoundException())->setModel(Aventureiro::class, [$idAventureiro]);
+            }
 
+            $jaFez = $this->repository->idsJaConcluidos($idAventureiro, $idsMissao);
+            $novos = array_values(array_diff($idsMissao, $jaFez));
+
+            if (empty($novos)) {
+                return 0;
+            }
+
+            $linhas = $this->repository->buscarDadosRecompensaVarias($novos)
+                ->map(fn ($m) => [
+                    'id_aventureiro' => $idAventureiro,
+                    'id_missao'      => $m->missao_id,
+                    'ouro_recebido'  => $m->recompensa_ouro,
+                    'xp_recebido'    => $this->calcularXp($m->drop_xp, $m->quantidade_monstro),
+                ])
+                ->values()
+                ->all();
+
+            $this->repository->inserirVarias($linhas);
+
+            return count($linhas);
+        }
+
+        public function calcularXp(int $dropXp, int $quantidade): int
+        {
+            return $dropXp * $quantidade;
+        }
 
 
 }
