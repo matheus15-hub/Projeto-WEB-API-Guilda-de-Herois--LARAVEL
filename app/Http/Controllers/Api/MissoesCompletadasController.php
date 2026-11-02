@@ -11,41 +11,83 @@ use Illuminate\Http\Request;
 
 class MissoesCompletadasController extends Controller
 {
-    public function __construct(private MissoesCompletadasService $missoes_completadas) {}
-    public function index(Request $request) : JsonResponse
-    {   
-        $porPagina = $request->integer('per_page',10);
+    public function __construct(
+        private MissoesCompletadasService $missoesCompletadas
+    ) {}
 
-        $porPagina = min(max($porPagina,1),200);
-        $missao = $this->missoes_completadas->getMissoesCompletasAll($porPagina);
-        return response()->json($missao);
-    }
-
-    public function store(MissoesCompletasRequest $request) : JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $missao = $this->missoes_completadas->createMissaoCompleta($request->validated());
-        return response()->json($missao,201);
-    }
+        $porPagina = $request->integer('per_page', 10);
 
-    public function show(int $idMisso, int $idAve) : JsonResponse
-    {
-         $missao = $this->missoes_completadas->getMissaoAventureiroById($idMisso,$idAve);
-        return response()->json($missao);
-    }
+        $porPagina = min(max($porPagina, 1), 200);
 
-    public function update(int $idMisso, int $idAve, MissoesCompletasUpadateRequest $request) : JsonResponse
-    {
-        $missao = $this->missoes_completadas->upadateMissaoAventureirotaById($idMisso, $idAve ,$request->validated());
-        return response()->json($missao,200);
-    }
+        $missao = $this->missoesCompletadas
+            ->getMissoesCompletasAll($porPagina);
 
-   
-    public function destroy(int $idMisso, int $idAve) : JsonResponse
-    {
-        $missao = $this->missoes_completadas->deleteMissaoAventureiroById($idMisso, $idAve);
         return response()->json([
-            'mensagem' => "Deletação concluida de missoes_completas das chaves {$idMisso} (MISSAO) , {$idAve} (AVENTUREIRO)"
+            'message' => 'Missões completadas encontradas com sucesso!',
+            'data' => $missao
+        ], 200);
+    }
+
+    public function store(MissoesCompletasRequest $request): JsonResponse
+    {
+        $missao = $this->missoesCompletadas
+            ->createMissaoCompleta($request->validated());
+
+        return response()->json([
+            'message' => 'Missão completada registrada com sucesso!',
+            'data' => $missao
+        ], 201);
+    }
+
+    public function show(int $idMisso, int $idAve): JsonResponse
+    {
+        $missao = $this->missoesCompletadas
+            ->getMissaoAventureiroById($idMisso, $idAve);
+
+        return response()->json([
+            'message' => 'Missão completada encontrada com sucesso!',
+            'data' => $missao
+        ], 200);
+    }
+
+    public function update(
+        int $idMisso,
+        int $idAve,
+        MissoesCompletasUpadateRequest $request
+    ): JsonResponse {
+
+        $missaoAntiga = $this->missoesCompletadas
+            ->getMissaoAventureiroById($idMisso, $idAve);
+
+        $missaoAtualizada = $this->missoesCompletadas
+            ->upadateMissaoAventureirotaById(
+                $idMisso,
+                $idAve,
+                $request->validated()
+            );
+
+        return response()->json([
+            'message' => 'Missão completada atualizada com sucesso!',
+            'data' => [
+                'antes' => $missaoAntiga,
+                'depois' => $missaoAtualizada
             ]
-        );
+        ], 200);
+    }
+
+    public function destroy(int $idMisso, int $idAve): JsonResponse
+    {
+        $missao = $this->missoesCompletadas
+            ->getMissaoAventureiroById($idMisso, $idAve);
+
+        $this->missoesCompletadas
+            ->deleteMissaoAventureiroById($idMisso, $idAve);
+
+        return response()->json([
+            'message' => 'Missão completada deletada com sucesso!',
+            'data' => $missao
+        ], 200);
     }
 }

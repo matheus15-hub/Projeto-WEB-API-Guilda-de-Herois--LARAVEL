@@ -6,44 +6,72 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MissaoRequest;
 use App\Services\MissaoService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class MissaoController extends Controller
 {
-    
-    public function __construct(private MissaoService $missao_service){}
-  
+    public function __construct(
+        private MissaoService $missaoService
+    ) {}
 
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
-        $missao = $this->missao_service->getMissaoAll();
-        return response()->json($missao);
-    }
+        $missao = $this->missaoService->getMissaoAll();
 
- 
-    public function store(MissaoRequest $request) : JsonResponse
-    {
-        $missao = $this->missao_service->createMissao($request->validated());
-        return response()->json($missao,201);
-    }
-
-  
-    public function show(int $id) : JsonResponse
-    {
-        return response()->json($this->missao_service->getMissaoById($id));
-    }
-
-    public function update(int $id, MissaoRequest $request) : JsonResponse
-    {
-        $missao = $this->missao_service->updateMissaoById($id, $request->validated());
-        return response()->json($missao);
-    }
-
-
-    public function destroy(int $id) : JsonResponse
-    {
-        $this->missao_service->deleteMissaoById($id);
         return response()->json([
-        'mensagem' => "Missao {$id} foi deletada"]);
+            'message' => 'Missões encontradas com sucesso!',
+            'data' => $missao
+        ], 200);
+    }
+
+    public function store(MissaoRequest $request): JsonResponse
+    {
+        $missao = $this->missaoService->createMissao(
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Missão criada com sucesso!',
+            'data' => $missao
+        ], 201);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $missao = $this->missaoService->getMissaoById($id);
+
+        return response()->json([
+            'message' => 'Missão encontrada com sucesso!',
+            'data' => $missao
+        ], 200);
+    }
+
+    public function update(int $id, MissaoRequest $request): JsonResponse
+    {
+        $missaoAntiga = $this->missaoService->getMissaoById($id);
+
+        $missaoAtualizada = $this->missaoService->updateMissaoById(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Missão atualizada com sucesso!',
+            'data' => [
+                'antes' => $missaoAntiga,
+                'depois' => $missaoAtualizada
+            ]
+        ], 200);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $missao = $this->missaoService->getMissaoById($id);
+
+        $this->missaoService->deleteMissaoById($id);
+
+        return response()->json([
+            'message' => 'Missão deletada com sucesso!',
+            'data' => $missao
+        ], 200);
     }
 }
