@@ -2,21 +2,18 @@
 
 namespace App\Interfaces;
 
-use App\Models\Aventureiro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use stdClass;
 
 interface AventureiroInterface
 {
-    public function createAventureiro(array $dados): Aventureiro;
+    public function createAventureiro(array $dados): stdClass;
 
-    public function getAventureiroByID(int $id): Aventureiro;
+    public function getAventureiroByID(int $id): stdClass;
 
     public function getAventureiroAll(): Collection;
 
-    public function updateAventureiroById(
-        int $id,
-        array $dados
-    ): Aventureiro;
+    public function updateAventureiroById(int $id, array $dados): stdClass;
 
     public function deleteAventureiroById(int $id): void;
 
@@ -24,5 +21,5 @@ interface AventureiroInterface
 
     public function listarMissoesCompletadasGuilda(int $idGuilda);
 
-    public function transferirAventureiro(int $idAventureiro,?int $novaGuildaId): void;
+    public function transferirAventureiro(int $idAventureiro, ?int $novaGuildaId): void;
 }
