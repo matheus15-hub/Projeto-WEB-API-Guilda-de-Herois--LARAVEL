@@ -11,10 +11,16 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void{
+    public function register(): void
+    {
         $this->app->bind(
             AventureiroInterface::class,
             AventureiroService::class
+        );
+
+        $this->app->bind(
+            MissoesCompletadasRepositoryInterface::class,
+            MissoesCompletadasRepository::class
         );
     }
 
