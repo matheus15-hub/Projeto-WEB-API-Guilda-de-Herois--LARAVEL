@@ -5,48 +5,77 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AventureiroRequest;
 use App\Http\Requests\AventureiroUpdateRequest;
-use App\Services\AventureiroService;
+use App\Interfaces\AventureiroInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AventureiroController extends Controller
 {
-    public function __construct(private AventureiroService $aventureiroService){}
-    
+    public function __construct(
+        private AventureiroInterface $aventureiroService
+    ) {}
 
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
         $avent = $this->aventureiroService->getAventureiroAll();
-        return response()->json($avent);
+
+        return response()->json([
+            'message' => 'Aventureiros encontrados com sucesso!',
+            'data' => $avent
+        ], 200);
     }
 
     public function store(AventureiroRequest $request): JsonResponse
-{
-    $id = $this->aventureiroService->createAventureiro(  $request->validated());
+    {
+        $avent = $this->aventureiroService->createAventureiro(
+            $request->validated()
+        );
 
-    return response()->json([
-        'mensagem' => 'Aventureiro criado com sucesso!',
-        'Aventureiro::' => $id
-    ], 201);
-}
-    
-    
+        return response()->json([
+            'message' => 'Aventureiro criado com sucesso!',
+            'data' => $avent
+        ], 201);
+    }
+
     public function show(int $id): JsonResponse
     {
         $avent = $this->aventureiroService->getAventureiroByID($id);
-        return response()->json($avent);
+
+        return response()->json([
+            'message' => 'Aventureiro encontrado com sucesso!',
+            'data' => $avent
+        ], 200);
     }
 
+    public function update(
+        int $id,
+        AventureiroUpdateRequest $request
+    ): JsonResponse {
 
-    public function update(int $id, AventureiroUpdateRequest $request) : JsonResponse
-    {
-        $avent = $this->aventureiroService->updateAventureiroById($id , $request->validated());
-        return response()->json($avent, 200);
+        $aventAntigo = $this->aventureiroService->getAventureiroByID($id);
+
+        $aventAtualizado = $this->aventureiroService->updateAventureiroById(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Aventureiro atualizado com sucesso!',
+            'data' => [
+                'antes' => $aventAntigo,
+                'depois' => $aventAtualizado
+            ]
+        ], 200);
     }
 
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $avent = $this->aventureiroService->deleteAventureiroById($id);
-        return response()->json(null,204);
+        $avent = $this->aventureiroService->getAventureiroByID($id);
+
+        $this->aventureiroService->deleteAventureiroById($id);
+
+        return response()->json([
+            'message' => 'Aventureiro deletado com sucesso!',
+            'data' => $avent
+        ], 200);
     }
 }

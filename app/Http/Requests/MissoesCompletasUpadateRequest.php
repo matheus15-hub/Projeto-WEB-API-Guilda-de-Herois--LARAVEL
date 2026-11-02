@@ -2,52 +2,57 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
 class MissoesCompletasUpadateRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-             'id_aventureiro'=>[
+            'id_aventureiro' => [
                 'required',
                 'integer',
                 'min:1',
                 'exists:aventureiro,aventureiro_id'
             ]
-        ];    
+        ];
     }
 
-    public function withValidator(Validator $validator){
+    public function messages(): array
+    {
+        return [
+            'id_aventureiro.required' => 'O ID do aventureiro é obrigatório.',
+            'id_aventureiro.integer' => 'O ID do aventureiro deve ser um número inteiro.',
+            'id_aventureiro.min' => 'O ID do aventureiro deve ser maior que zero.',
+            'id_aventureiro.exists' => 'O aventureiro informado não existe.',
+        ];
+    }
 
-        $validator->after(function(Validator $validator){
-            $campos_permetidos =[
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+
+            $camposPermitidos = [
                 'id_aventureiro'
             ];
-            $campos_recebidos = array_keys($this->all());
 
-            $campos_invalidos = array_diff(
-                $campos_recebidos,
-                $campos_permetidos
+            $camposRecebidos = array_keys($this->all());
+
+            $camposInvalidos = array_diff(
+                $camposRecebidos,
+                $camposPermitidos
             );
 
-            foreach($campos_invalidos as $campos){
+            foreach ($camposInvalidos as $campo) {
                 $validator->errors()->add(
-                    $campos,
-                    "O campo {$campos} não pode ser alterados."
+                    $campo,
+                    "O campo '{$campo}' não pode ser alterado."
                 );
             }
         });

@@ -23,3 +23,6 @@ Route::apiResource('missoes_completas', MissoesCompletadasController::class);
 Route::get( 'missoes_completas/{idAve}/{idMissao}', [MissoesCompletadasController::class, 'show']);
 Route::put('missoes_completas/{idAve}/{idMissao}',   [MissoesCompletadasController::class, 'update']);
 Route::delete('/missoes_completas/{idAventureiro}/{idMissao}',[MissoesCompletadasController::class, 'destroy']);
+
+Route::get('guilda/{idGuilda}/ouro',[GuildaController::class, 'ouro']);
+Route::get('guilda/{idGuilda}/missoes-completadas',[GuildaController::class, 'missoesCompletadas']);
