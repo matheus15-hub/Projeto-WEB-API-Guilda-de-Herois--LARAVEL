@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Missao;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 
 class MissaoService{
@@ -58,5 +59,18 @@ class MissaoService{
     {
         $missao = $this->getMissaoById($id);
         $missao->delete();
+    }
+    public function cadastrarMissao(array $dados)
+    {
+        DB::statement(
+            'CALL pr_cadastrar_missao(?, ?, ?, ?, ?)',
+            [
+                $dados['nome'],
+                $dados['dificuldade'],
+                $dados['recompensa'],
+                $dados['id_monstro'],
+                $dados['quantidade_monstros']
+            ]
+        );
     }
 }

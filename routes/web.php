@@ -1,14 +1,18 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\AventureiroMissaoController;
+use App\Http\Controllers\Web\AventureiroWebController;
+use App\Http\Controllers\Web\ClasseWebController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\MissaoWebController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Login e Registro (Não conectados)
+// Login e registro (não conectados)
 Route::middleware('guest')->group(function () {
     Route::get('/cadastro', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/cadastro', [AuthController::class, 'register']);
@@ -17,8 +21,33 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 });
 
-// Login e Registro (Conectados)
+// Área autenticada
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Aventureiros 
+    Route::resource('aventureiros', AventureiroWebController::class)
+        ->except('create')
+        ->parameters(['aventureiros' => 'aventureiro']);
+
+    // Missões de cada aventureiro
+    Route::get('/aventureiros/{aventureiro}/missoes', [AventureiroMissaoController::class, 'index'])
+        ->name('aventureiros.missoes.index');
+    Route::post('/aventureiros/{aventureiro}/missoes', [AventureiroMissaoController::class, 'store'])
+        ->name('aventureiros.missoes.store');
+    Route::delete('/aventureiros/{aventureiro}/missoes/{missao}', [AventureiroMissaoController::class, 'destroy'])
+        ->name('aventureiros.missoes.destroy');
+
+    // Classes
+    Route::resource('classes', ClasseWebController::class)
+        ->except('show')
+        ->parameters(['classes' => 'classe']);
+
+    // Missões vistas pelo lado da missão
+    Route::get('/missoes', [MissaoWebController::class, 'index'])->name('missoes.index');
+    Route::get('/missoes/{missao}', [MissaoWebController::class, 'show'])->name('missoes.show');
+    Route::post('/missoes/{missao}/aventureiros', [MissaoWebController::class, 'vincular'])->name('missoes.vincular');
+    Route::post('/missoes/{missao}/trocar', [MissaoWebController::class, 'trocar'])->name('missoes.trocar');
+    Route::delete('/missoes/{missao}/aventureiros/{aventureiro}', [MissaoWebController::class, 'desvincular'])->name('missoes.desvincular');
 });
