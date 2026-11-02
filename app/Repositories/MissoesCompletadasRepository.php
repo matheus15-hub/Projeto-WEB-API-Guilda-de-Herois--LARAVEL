@@ -1,10 +1,11 @@
 <?php
 
-namespace \App\Repositories;
+namespace App\Repositories;
 
 use App\Interfaces\MissoesCompletadasRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Override;
 
 class MissoesCompletadasRepository implements MissoesCompletadasRepositoryInterface 
 {
@@ -15,7 +16,8 @@ class MissoesCompletadasRepository implements MissoesCompletadasRepositoryInterf
             ->exists();
     }    
 
-    public function idJaConcluidos(int $idAventureiro, array $idsMissao): array
+    #[Override]
+    public function idsJaConcluidos(int $idAventureiro, array $idsMissao): array
     {
         return DB::table('missoes_completadas')
             ->where('id_aventureiro', $idAventureiro)
