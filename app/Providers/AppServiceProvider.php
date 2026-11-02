@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             AventureiroRepositoryInterface::class,
             AventureiroRepository::class
         );
-        $this->app->bind(
+         $this->app->bind(
             MissoesCompletadasRepositoryInterface::class,
             MissoesCompletadasRepository::class
         );

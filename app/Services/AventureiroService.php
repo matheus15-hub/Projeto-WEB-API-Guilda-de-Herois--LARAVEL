@@ -2,24 +2,24 @@
 
 namespace App\Services;
 
+use App\Interfaces\AventureiroInterface;
+use App\Repositories\AventureiroRepository;
+use Illuminate\Support\Collection;
+use stdClass;
 
-use App\Interfaces\AventureiroRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-
-class AventureiroService
+class AventureiroService implements AventureiroInterface
 {
     public function __construct(
-        private AventureiroRepositoryInterface $repository,
+        private AventureiroRepository $repository,
         private GuildaService $guildaService
     ) {}
 
-    public function createAventureiro(array $dados)
+    public function createAventureiro(array $dados): stdClass
     {
         return $this->repository->create($dados);
     }
 
-    public function getAventureiroByID(int $id)
+    public function getAventureiroByID(int $id): stdClass
     {
         return $this->repository->findById($id);
     }
@@ -29,9 +29,9 @@ class AventureiroService
         return $this->repository->all();
     }
 
-    public function updateAventureiroById(int $id, array $dados)
+    public function updateAventureiroById(int $id, array $dados): stdClass
     {
-        return $this->repository->upadate($id, $dados);
+        return $this->repository->update($id, $dados);
     }
 
     public function deleteAventureiroById(int $id): void
@@ -49,13 +49,8 @@ class AventureiroService
         return $this->guildaService->listarMissoesCompletadasGuilda($idGuilda);
     }
 
-    public function transferirAventureiro(
-        int $idAventureiro,
-        ?int $novaGuildaId
-    ): void {
-        DB::statement(
-            'CALL pr_transferir_aventureiro(?, ?)',
-            [$idAventureiro, $novaGuildaId]
-        );
+    public function transferirAventureiro(int $idAventureiro, ?int $novaGuildaId): void
+    {
+        $this->repository->transferirAventureiro($idAventureiro, $novaGuildaId);
     }
 }
