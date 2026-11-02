@@ -12,6 +12,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Interfaces\AventureiroInterface;
 use App\Interfaces\MissoesCompletadasRepositoryInterface;
 use App\Repositories\MissoesCompletadasRepository;
+use App\Interfaces\MonstroRepositoryInterface;
+use App\Repositories\MonstroRepository;
 use App\Services\AventureiroService;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,9 +37,14 @@ class AppServiceProvider extends ServiceProvider
             AventureiroRepositoryInterface::class,
             AventureiroRepository::class
         );
-         $this->app->bind(
+        $this->app->bind(
             MissoesCompletadasRepositoryInterface::class,
             MissoesCompletadasRepository::class
+        );
+
+        $this->app->bind(
+            MonstroRepositoryInterface::class,
+            MonstroRepository::class
         );
     }
 

@@ -37,9 +37,8 @@
 
             </form>
 
-            <p class="switch">Ainda não tem conta? <a href="{{ route('register') }}">Cadastre-se</a></p>
-            
-            </form>
+                <p class="switch">Ainda não tem conta? <a href="{{ route('register') }}">Cadastre-se</a></p>
         </div>
     </main>
 </div>
+@endsection
