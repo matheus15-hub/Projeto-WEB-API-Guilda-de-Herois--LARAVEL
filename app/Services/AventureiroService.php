@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\AventureiroInterface;
+use App\Interfaces\AventureiroRepositoryInterface;
 use App\Repositories\AventureiroRepository;
 use Illuminate\Support\Collection;
 use stdClass;
@@ -10,7 +11,7 @@ use stdClass;
 class AventureiroService implements AventureiroInterface
 {
     public function __construct(
-        private AventureiroRepository $repository,
+        private AventureiroRepositoryInterface $repository,
         private GuildaService $guildaService
     ) {}
 
@@ -52,5 +53,10 @@ class AventureiroService implements AventureiroInterface
     public function transferirAventureiro(int $idAventureiro, ?int $novaGuildaId): void
     {
         $this->repository->transferirAventureiro($idAventureiro, $novaGuildaId);
+    }
+
+    public function listarPorGuilda(int $idGuilda, ?string $busca = null)
+    {
+        return $this->repository->listarPorGuilda($idGuilda, $busca);
     }
 }

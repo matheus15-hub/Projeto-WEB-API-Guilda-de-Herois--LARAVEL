@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Interfaces\AventureiroRepositoryInterface;
 use App\Interfaces\ClasseRepositoryInterface;
 use App\Interfaces\GuildaRepositoryInterface;
 use App\Repositories\AventureiroRepository;

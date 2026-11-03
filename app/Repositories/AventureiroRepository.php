@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\AventureiroRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class AventureiroRepository
+class AventureiroRepository implements AventureiroRepositoryInterface
 {
     public function all()
     {
@@ -13,9 +14,15 @@ class AventureiroRepository
 
     public function findById(int $id)
     {
-        return DB::table('aventureiro')
+        $aventureiro = DB::table('aventureiro')
             ->where('aventureiro_id', $id)
-            ->firstOrFail();
+            ->first();
+
+        if (!$aventureiro) {
+            abort(404, 'Aventureiro não encontrado.');
+        }
+
+        return $aventureiro;
     }
 
     public function create(array $dados)
@@ -26,7 +33,7 @@ class AventureiroRepository
             'experiencia' => $dados['experiencia'] ?? 0,
             'ouro' => $dados['ouro'] ?? 1,
             'id_classe' => $dados['id_classe'],
-            'id_guilda' => $dados['id_guilda']
+            'id_guilda' => $dados['id_guilda'] ?? null,
         ], 'aventureiro_id');
 
         return $this->findById($id);
@@ -34,36 +41,27 @@ class AventureiroRepository
 
     public function update(int $id, array $dados)
     {
-        $dadosAtualizados = [];
+        $campos = [
+            'nome' => 'aventureiro_nome',
+            'idade' => 'idade',
+            'experiencia' => 'experiencia',
+            'ouro' => 'ouro',
+            'id_classe' => 'id_classe',
+            'id_guilda' => 'id_guilda',
+        ];
 
-        if (isset($dados['nome'])) {
-            $dadosAtualizados['aventureiro_nome'] = $dados['nome'];
+        $atualizacao = [];
+
+        foreach ($campos as $entrada => $coluna) {
+            if (array_key_exists($entrada, $dados)) {
+                $atualizacao[$coluna] = $dados[$entrada];
+            }
         }
 
-        if (isset($dados['idade'])) {
-            $dadosAtualizados['idade'] = $dados['idade'];
-        }
-
-        if (isset($dados['experiencia'])) {
-            $dadosAtualizados['experiencia'] = $dados['experiencia'];
-        }
-
-        if (isset($dados['ouro'])) {
-            $dadosAtualizados['ouro'] = $dados['ouro'];
-        }
-
-        if (isset($dados['id_classe'])) {
-            $dadosAtualizados['id_classe'] = $dados['id_classe'];
-        }
-
-        if (isset($dados['id_guilda'])) {
-            $dadosAtualizados['id_guilda'] = $dados['id_guilda'];
-        }
-
-        if (!empty($dadosAtualizados)) {
+        if (!empty($atualizacao)) {
             DB::table('aventureiro')
                 ->where('aventureiro_id', $id)
-                ->update($dadosAtualizados);
+                ->update($atualizacao);
         }
 
         return $this->findById($id);
@@ -71,6 +69,8 @@ class AventureiroRepository
 
     public function delete(int $id): void
     {
+        $this->findById($id);
+
         DB::table('aventureiro')
             ->where('aventureiro_id', $id)
             ->delete();
@@ -82,5 +82,26 @@ class AventureiroRepository
             $idAventureiro,
             $novaGuildaId
         ]);
+    }
+
+    public function listarPorGuilda(int $idGuilda, ?string $busca = null)
+    {
+        return DB::table('aventureiro as a')
+            ->leftJoin('classe as c', 'c.classe_id', '=', 'a.id_classe')
+            ->where('a.id_guilda', $idGuilda)
+            ->when($busca, function ($query) use ($busca) {
+                $query->where('a.aventureiro_nome', 'ilike', "%{$busca}%");
+            })
+            ->orderBy('a.aventureiro_nome')
+            ->select('a.*', 'c.classe_nome')
+            ->paginate(15)
+            ->withQueryString();
+    }
+
+    public function existe(int $id): bool
+    {
+        return DB::table('aventureiro')
+            ->where('aventureiro_id', $id)
+            ->exists();
     }
 }
