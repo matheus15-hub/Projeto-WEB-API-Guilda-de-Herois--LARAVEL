@@ -49,14 +49,19 @@ class AventureiroMissaoWebTest extends WebTestCase
         $response->assertSessionHasErrors(['missoes']);
     }
 
-    public function test_store_vincula_a_missao_usando_o_service_mockado(): void
-    {
+    public function test_store_vincula_a_missao_usando_o_service_mockado(): void{
         $guilda = $this->criarGuilda();
         $this->logarComoSecretario($guilda);
+
         $aventureiro = $this->criarAventureiro($guilda->guilda_id);
         $missao = $this->criarMissao();
 
         $this->mock(MissoesCompletadasService::class, function (MockInterface $mock) use ($aventureiro, $missao) {
+            $mock->shouldReceive('aventureiroJaConcluiu')
+                ->once()
+                ->with($aventureiro->aventureiro_id, $missao->missao_id)
+                ->andReturn(false);
+
             $mock->shouldReceive('createMissaoCompleta')
                 ->once()
                 ->with([

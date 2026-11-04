@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Aventureiro;
+use App\Models\Missao;
 use App\Services\MissoesCompletadasService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
@@ -88,8 +89,11 @@ class AventureiroMissaoController extends Controller
 
         return $resposta;
     }
-        public function destroy (Request $request, Aventureiro $aventureiro, Missao $missao): RedirectResponse
-        {
+        public function destroy(
+            Request $request,
+            Aventureiro $aventureiro,
+            Missao $missao
+        ): RedirectResponse {
             $this->daMinhaGuilda($request, $aventureiro);
 
             $this->missoesCompletadas->deleteMissaoAventureiroById(
