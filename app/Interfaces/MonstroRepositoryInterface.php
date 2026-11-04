@@ -3,17 +3,18 @@
 namespace App\Interfaces;
 
 use App\Models\Monstro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use stdClass;
 
 interface MonstroRepositoryInterface
 {
-    public function create(array $dados): Monstro;
+    public function create(array $dados): stdClass;
 
-    public function findById(int $id): Monstro;
+    public function findById(int $id): stdClass;
 
     public function all(): Collection;
 
-    public function update(int $id, array $dados): Monstro;
+    public function update(int $id, array $dados): stdClass;
 
     public function delete(int $id): void;
 }

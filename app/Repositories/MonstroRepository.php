@@ -4,12 +4,13 @@ namespace App\Repositories;
 
 use App\Interfaces\MonstroRepositoryInterface;
 use App\Models\Monstro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class MonstroRepository implements MonstroRepositoryInterface
 {
-    public function create(array $dados): Monstro
+    public function create(array $dados) : stdClass
     {
         $id = DB::table('monstro')->insertGetId([
             'monstro_nome' => $dados['nome'],
@@ -19,7 +20,7 @@ class MonstroRepository implements MonstroRepositoryInterface
         return $this->findById($id);
     }
 
-    public function findById(int $id): Monstro
+    public function findById(int $id) : stdClass
     {
         $dados = DB::table('monstro')
             ->where('monstro_id', $id)
@@ -29,17 +30,15 @@ class MonstroRepository implements MonstroRepositoryInterface
             abort(404, 'Monstro não encontrado.');
         }
 
-        return new Monstro((array) $dados);
+        return $dados;
     }
 
-    public function all(): Collection
+    public function all() : Collection
     {
-        return Monstro::hydrate(
-            DB::table('monstro')->get()->toArray()
-        );
+        return DB::table('monstro')->get();
     }
 
-    public function update(int $id, array $dados): Monstro
+    public function update(int $id, array $dados): stdClass
     {
         $atualizacao = [];
 

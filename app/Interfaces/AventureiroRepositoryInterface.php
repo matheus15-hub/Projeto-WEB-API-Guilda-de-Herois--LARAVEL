@@ -19,4 +19,10 @@ interface AventureiroRepositoryInterface
     public function listarPorGuilda(int $idGuilda, ?string $busca = null);
 
     public function existe(int $id): bool;
+
+    public function buscarPorIdEGuilda(int $id, int $idGuilda);
+
+    public function listarParaWeb( int $idGuilda,?string $busca = null);
+
+    public function buscarDetalhesParaWeb(int $id,int $idGuilda);
 }

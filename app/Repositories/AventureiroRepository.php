@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\AventureiroRepositoryInterface;
+use App\Models\Aventureiro;
 use Illuminate\Support\Facades\DB;
 
 class AventureiroRepository implements AventureiroRepositoryInterface
@@ -102,4 +103,48 @@ class AventureiroRepository implements AventureiroRepositoryInterface
             ->where('aventureiro_id', $id)
             ->exists();
     }
+
+    public function listarParaWeb(
+        int $idGuilda,
+        ?string $busca = null
+    ) {
+        return Aventureiro::with('classe')
+            ->where('id_guilda', $idGuilda)
+            ->when($busca, function ($query) use ($busca) {
+                $query->where(
+                    'aventureiro_nome',
+                    'ilike',
+                    "%{$busca}%"
+                );
+            })
+            ->orderBy('aventureiro_nome')
+            ->paginate(25)
+            ->withQueryString();
+    }
+
+    public function buscarDetalhesParaWeb(
+        int $id,
+        int $idGuilda
+    ) {
+        return Aventureiro::with([
+            'classe',
+            'missoes_completadas.missao'
+        ])
+            ->where('aventureiro_id', $id)
+            ->where('id_guilda', $idGuilda)
+            ->firstOrFail();
+    }
+    public function buscarPorIdEGuilda( int $id,int $idGuilda) {
+        $aventureiro = DB::table('aventureiro')
+            ->where('aventureiro_id', $id)
+            ->where('id_guilda', $idGuilda)
+            ->first();
+
+        if (!$aventureiro) {
+            abort(404, 'Aventureiro não encontrado nesta guilda.');
+        }
+
+        return $aventureiro;
+    }
+
 }

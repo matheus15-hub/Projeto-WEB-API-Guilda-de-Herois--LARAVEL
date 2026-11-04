@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Interfaces\MonstroRepositoryInterface;
-use App\Models\Monstro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use stdClass;
 
 class MonstroService
 {
@@ -12,12 +12,12 @@ class MonstroService
         private MonstroRepositoryInterface $repository
     ) {}
 
-    public function createMonstro(array $dados): Monstro
+    public function createMonstro(array $dados): stdClass
     {
         return $this->repository->create($dados);
     }
 
-    public function getMonstroById(int $id): Monstro
+    public function getMonstroById(int $id): stdClass
     {
         return $this->repository->findById($id);
     }
@@ -27,7 +27,7 @@ class MonstroService
         return $this->repository->all();
     }
 
-    public function updateMonstroById(int $id, array $dados): Monstro
+    public function updateMonstroById(int $id, array $dados): stdClass
     {
         return $this->repository->update($id, $dados);
     }

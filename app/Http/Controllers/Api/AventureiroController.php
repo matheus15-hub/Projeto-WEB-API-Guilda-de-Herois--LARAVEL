@@ -7,6 +7,7 @@ use App\Http\Requests\AventureiroRequest;
 use App\Http\Requests\AventureiroUpdateRequest;
 use App\Services\AventureiroService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AventureiroController extends Controller
 {
@@ -64,6 +65,21 @@ class AventureiroController extends Controller
                 'antes' => $aventAntigo,
                 'depois' => $aventAtualizado
             ]
+        ], 200);
+    }
+    public function transferir(int $id, Request $request): JsonResponse
+    {
+        $dados = $request->validate([
+            'id_guilda' => ['nullable', 'integer', 'exists:guilda,guilda_id']
+        ]);
+
+        $this->aventureiroService->transferirAventureiro(
+            $id,
+            $dados['id_guilda'] ?? null
+        );
+
+        return response()->json([
+            'message' => 'Aventureiro transferido com sucesso!'
         ], 200);
     }
 

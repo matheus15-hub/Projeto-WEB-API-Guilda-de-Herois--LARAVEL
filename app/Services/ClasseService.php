@@ -2,10 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\Raridade;
 use App\Interfaces\ClasseRepositoryInterface;
-use App\Models\Classe;
-use Doctrine\DBAL\Query\From;
 use Illuminate\Support\Collection;
 
 class ClasseService{

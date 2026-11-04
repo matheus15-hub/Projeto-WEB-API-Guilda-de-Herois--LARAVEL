@@ -77,6 +77,28 @@ class MissoesCompletadasController extends Controller
         ], 200);
     }
 
+    public function concluidasPorAventureiro(int $id): JsonResponse
+    {
+        $missoes = $this->missoesCompletadas
+            ->listarConcluidasPorAventureiro($id);
+
+        return response()->json([
+            'message' => 'Histórico de missões encontrado com sucesso!',
+            'data' => $missoes
+        ], 200);
+    }
+
+    public function disponiveisPorAventureiro(int $id): JsonResponse
+    {
+        $missoes = $this->missoesCompletadas
+            ->listarDisponiveisPorAventureiro($id);
+
+        return response()->json([
+            'message' => 'Missões disponíveis encontradas com sucesso!',
+            'data' => $missoes
+        ], 200);
+    }
+
     public function destroy(int $idMisso, int $idAve): JsonResponse
     {
         $missao = $this->missoesCompletadas

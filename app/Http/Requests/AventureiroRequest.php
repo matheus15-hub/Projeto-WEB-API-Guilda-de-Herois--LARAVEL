@@ -43,7 +43,7 @@ class AventureiroRequest extends FormRequest
             ],
 
             'id_guilda' => [
-                'required',
+                'sometimes',
                 'integer',
                 'min:1',
                 'exists:guilda,guilda_id',

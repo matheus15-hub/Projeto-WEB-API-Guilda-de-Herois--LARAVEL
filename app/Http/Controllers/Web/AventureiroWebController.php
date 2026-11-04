@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AventureiroWebRequest;
-use App\Models\Aventureiro;
-use App\Models\Classe;
+use App\Services\AventureiroService;
+use App\Services\ClasseService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,105 +13,125 @@ use Illuminate\View\View;
 
 class AventureiroWebController extends Controller
 {
+    public function __construct(
+        private AventureiroService $aventureiroService,
+        private ClasseService $classeService
+    ) {}
+
     public function index(Request $request): View
     {
-        $aventureiros = Aventureiro::with('classe')
-            ->where('id_guilda', $this->guildaId($request))
-            ->when($request->filled('busca'), fn ($q) => $q->where(
-                'aventureiro_nome', 'ilike', '%' . $request->input('busca') . '%'
-            ))
-            ->orderBy('aventureiro_nome')
-            ->paginate(25)
-            ->withQueryString();
+        $idGuilda = $this->guildaId($request);
 
-        $classes = Classe::orderBy('classe_nome')->get();
+        $aventureiros = $this->aventureiroService->listarParaWeb(
+            $idGuilda,
+            $request->input('busca')
+        );
 
-        return view('aventureiros.index', compact('aventureiros', 'classes'));
+        $classes = $this->classeService->getClasseAll();
+
+        return view('aventureiros.index', compact(
+            'aventureiros',
+            'classes'
+        ));
     }
 
-    /**
-     * Redireciona a rota de criação para a index (onde fica o formulário de cadastro).
-     */
     public function create(Request $request): View
     {
         return $this->index($request);
     }
 
-    /**
-     * Salva um novo aventureiro vinculado à guilda do usuário autenticado.
-     */
     public function store(AventureiroWebRequest $request): RedirectResponse
     {
         $dados = $request->validated();
 
-        Aventureiro::create([
-            'aventureiro_nome' => $dados['nome'],
-            'idade'            => $dados['idade'],
-            'experiencia'      => $dados['experiencia'] ?? 0,
-            'ouro'             => $dados['ouro'] ?? 0,
-            'id_classe'        => $dados['id_classe'],
-            'id_guilda'        => $this->guildaId($request),
-        ]);
+        $dados['experiencia'] = $dados['experiencia'] ?? 0;
+        $dados['ouro'] = $dados['ouro'] ?? 0;
+        $dados['id_guilda'] = $this->guildaId($request);
+
+        $this->aventureiroService->createAventureiro($dados);
 
         return redirect()->route('aventureiros.index')
             ->with('sucesso', 'Aventureiro criado com sucesso!');
     }
 
-    public function show(Request $request, Aventureiro $aventureiro): View
+    public function show(Request $request, int $aventureiro): View
     {
-        $this->daMinhaGuilda($request, $aventureiro);
+        $dados = $this->aventureiroService->buscarDetalhesParaWeb(
+            $aventureiro,
+            $this->guildaId($request)
+        );
 
-        $aventureiro->load('classe');
-        $missoes = $aventureiro->missoes_completadas()->with('missao')->get();
+        $aventureiro = $dados['aventureiro'];
+        $missoes = $dados['missoes'];
 
-        return view('aventureiros.show', compact('aventureiro', 'missoes'));
+        return view('aventureiros.show', compact(
+            'aventureiro',
+            'missoes'
+        ));
     }
 
-    public function edit(Request $request, Aventureiro $aventureiro): View
+    public function edit(Request $request, int $aventureiro): View
     {
-        $this->daMinhaGuilda($request, $aventureiro);
+        $aventureiro = $this->aventureiroService->buscarPorIdEGuilda(
+            $aventureiro,
+            $this->guildaId($request)
+        );
 
-        return view('aventureiros.edit', [
-            'aventureiro' => $aventureiro,
-            'classes'     => Classe::orderBy('classe_nome')->get(),
-        ]);
+        $classes = $this->classeService->getClasseAll();
+
+        return view('aventureiros.edit', compact(
+            'aventureiro',
+            'classes'
+        ));
     }
 
-    public function update(AventureiroWebRequest $request, Aventureiro $aventureiro): RedirectResponse
-    {
-        $this->daMinhaGuilda($request, $aventureiro);
+    public function update(
+        AventureiroWebRequest $request,
+        int $aventureiro
+    ): RedirectResponse {
+        $idGuilda = $this->guildaId($request);
+
+        $this->aventureiroService->buscarPorIdEGuilda(
+            $aventureiro,
+            $idGuilda
+        );
 
         $dados = $request->validated();
 
-        $aventureiro->update([
-            'aventureiro_nome' => $dados['nome'],
-            'idade'            => $dados['idade'],
-            'experiencia'      => $dados['experiencia'] ?? 0,
-            'ouro'             => $dados['ouro'] ?? 0,
-            'id_classe'        => $dados['id_classe'],
-        ]);
+        $dados['experiencia'] = $dados['experiencia'] ?? 0;
+        $dados['ouro'] = $dados['ouro'] ?? 0;
+
+        $this->aventureiroService->updateAventureiroById(
+            $aventureiro,
+            $dados
+        );
 
         return redirect()->route('aventureiros.index')
             ->with('sucesso', 'Aventureiro atualizado com sucesso.');
     }
 
-    public function destroy(Request $request, Aventureiro $aventureiro): RedirectResponse
-    {
-        $this->daMinhaGuilda($request, $aventureiro);
+    public function destroy(
+        Request $request,
+        int $aventureiro
+    ): RedirectResponse {
+        $idGuilda = $this->guildaId($request);
+
+        $this->aventureiroService->buscarPorIdEGuilda(
+            $aventureiro,
+            $idGuilda
+        );
 
         try {
-            $aventureiro->delete();
+            $this->aventureiroService->deleteAventureiroById($aventureiro);
         } catch (QueryException $e) {
             return redirect()->route('aventureiros.index')
-                ->with('erro', 'Não foi possível excluir: este aventureiro possui missões registradas.');
+                ->with(
+                    'erro',
+                    'Não foi possível excluir: este aventureiro possui missões registradas.'
+                );
         }
 
         return redirect()->route('aventureiros.index')
             ->with('sucesso', 'Aventureiro excluído com sucesso.');
-    }
-
-    private function daMinhaGuilda(Request $request, Aventureiro $aventureiro): void
-    {
-        abort_unless((int) $aventureiro->id_guilda === $this->guildaId($request), 404);
     }
 }
