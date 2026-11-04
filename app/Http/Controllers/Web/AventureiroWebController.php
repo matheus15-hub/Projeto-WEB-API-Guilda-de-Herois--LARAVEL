@@ -29,43 +29,34 @@ class AventureiroWebController extends Controller
         return view('aventureiros.index', compact('aventureiros', 'classes'));
     }
 
-    public function store(Request $request, Aventureiro $aventureiro): RedirectResponse
+    /**
+     * Exibe o formulário de criação de aventureiro.
+     */
+    public function create(): View
     {
-        $this->daMinhaGuilda($request, $aventureiro);
+        $classes = Classe::orderBy('classe_nome')->get();
 
-        $dados = $request->validate(
-            [
-                'missoes'   => ['required', 'array', 'min:1'],
-                'missoes.*' => ['integer', 'distinct'],
-            ],
-            [
-                'missoes.required' => 'Selecione pelo menos uma missão.',
-                'missoes.min'      => 'Selecione pelo menos uma missão.',
-            ]
-        );
+        return view('aventureiros.create', compact('classes'));
+    }
 
-        $ids = array_map('intval', $dados['missoes']);
+    /**
+     * Salva um novo aventureiro vinculado à guilda do usuário autenticado.
+     */
+    public function store(AventureiroWebRequest $request): RedirectResponse
+    {
+        $dados = $request->validated();
 
-        // 1 consulta para conferir que todas existem (antes eram N)
-        if (Missao::whereIn('missao_id', $ids)->count() !== count($ids)) {
-            return back()->with('erro', 'Uma das missões selecionadas não existe.');
-        }
+        Aventureiro::create([
+            'aventureiro_nome' => $dados['nome'],
+            'idade'            => $dados['idade'],
+            'experiencia'      => $dados['experiencia'] ?? 0,
+            'ouro'             => $dados['ouro'] ?? 0,
+            'id_classe'        => $dados['id_classe'],
+            'id_guilda'        => $this->guildaId($request), // Injeta a guilda automaticamente do usuário logado
+        ]);
 
-        try {
-            $total = DB::transaction(fn () =>
-                $this->missoesCompletadas->createVariasMissoesCompletas(
-                    $aventureiro->aventureiro_id,
-                    $ids
-                )
-            );
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with('erro', 'Não foi possível vincular as missões. Nenhuma alteração foi salva.');
-        }
-
-        return redirect()->route('aventureiros.missoes.index', $aventureiro)
-            ->with('sucesso', $total . ($total === 1 ? ' missão vinculada.' : ' missões vinculadas.'));
+        return redirect()->route('aventureiros.index')
+            ->with('sucesso', 'Aventureiro criado com sucesso!');
     }
 
     public function show(Request $request, Aventureiro $aventureiro): View
@@ -84,7 +75,7 @@ class AventureiroWebController extends Controller
 
         return view('aventureiros.edit', [
             'aventureiro' => $aventureiro,
-            'classes' => Classe::orderBy('classe_nome')->get(),
+            'classes'     => Classe::orderBy('classe_nome')->get(),
         ]);
     }
 
@@ -96,10 +87,10 @@ class AventureiroWebController extends Controller
 
         $aventureiro->update([
             'aventureiro_nome' => $dados['nome'],
-            'idade' => $dados['idade'],
-            'experiencia' => $dados['experiencia'] ?? 0,
-            'ouro' => $dados['ouro'] ?? 0,
-            'id_classe' => $dados['id_classe'],
+            'idade'            => $dados['idade'],
+            'experiencia'      => $dados['experiencia'] ?? 0,
+            'ouro'             => $dados['ouro'] ?? 0,
+            'id_classe'        => $dados['id_classe'],
         ]);
 
         return redirect()->route('aventureiros.index')
