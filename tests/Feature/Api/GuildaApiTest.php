@@ -105,6 +105,18 @@ class GuildaApiTest extends TestCase
             ]);
     }
 
+    public function test_campos_obrigatorios_guilda()
+    {
+        $dados = [];
+
+        $response = $this->postJson('api/guilda',$dados);
+
+        $response->assertUnprocessable()
+        ->assertJsonValidationErrors(
+            'nome'
+        );
+    }
+
     public function test_atualizar_guilda(): void
     {
         $guildaAntiga = (object) [

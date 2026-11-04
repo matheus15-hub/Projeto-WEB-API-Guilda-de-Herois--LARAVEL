@@ -124,6 +124,53 @@ class AventureiroApiTest extends TestCase
                 ]);
         }
 
+        public function test_criando_aventureiro_sem_guilda()
+        {
+            $dados = [
+                'nome' => 'Artur Roman',
+                'idade' => 15,
+                'experiencia' => 0,
+                'id_classe' => 1
+            ];
+            $aventureiro = (object) [
+                'aventureiro_id' => 1,
+                'nome' => 'Artur Roman',
+                'idade' => 15,
+                'experiencia' => 0,
+                'id_classe' => 1
+            ];
+
+            $this->aventureiroMock
+            ->shouldReceive('createAventureiro')
+            ->with($dados)
+            ->once()
+            ->andReturn($aventureiro);
+
+            $response = $this->postJson('api/aventureiro', $dados);
+
+            $response->assertCreated()
+            ->assertJsonStructure([
+                'message',
+                'data'
+            ]);
+        }
+
+        public function test_campos_obrigatorios_criacao()
+        {
+            $dados = [];
+            $response = $this->postJson('api/aventureiro', $dados);
+
+            $response->assertUnprocessable()
+            ->assertJsonValidationErrors(
+                [
+                    'nome',
+                    'idade',
+                    'experiencia',
+                    'id_classe',
+                ]
+            );
+        }
+
     public function test_atualizar_aventureiro(): void
     {
         $aventureiroAntigo = (object) [

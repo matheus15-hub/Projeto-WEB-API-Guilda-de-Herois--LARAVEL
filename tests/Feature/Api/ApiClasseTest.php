@@ -70,11 +70,18 @@ class ApiClasseTest extends TestCase
             'descricao' => 'Alimentador de gente',
             'raridade' => 'E'
         ];
+        $classe =[
+            'classe_id' => 1,
+            'nome' => 'Cozinheiro',
+            'descricao' => 'Alimentador de gente',
+            'raridade' => 'E'
+        ];
 
         $this->classeMock
         ->shouldReceive('createClasse')
+        ->with($dado)
         ->once()
-        ->andReturn(10);
+        ->andReturn($classe);
 
         $responce = $this->postJson('api/classe', $dado);
 
@@ -99,6 +106,19 @@ class ApiClasseTest extends TestCase
             ->assertJsonValidationErrors(['nome']);
     }
 
+    public function test_esperando_erro_raridade()
+    {
+        $dados = [
+            'nome' => 'Cataclismo',
+            'descricao' => 'destrição em massa'
+        ];
+
+        $responce = $this->postJson('api/classe',$dados);
+
+        $responce->assertUnprocessable()
+        ->assertJsonValidationErrors(['raridade']);
+    }
+
     public function test_retornando_classe_por_id()
     {
         $classe = (object) [
@@ -120,5 +140,48 @@ class ApiClasseTest extends TestCase
             'message',
             'data'
         ]);
+    }
+
+    public function test_atualizando_classe()
+    {
+        $classeAntigo = (object) [
+            'classe_id' => 2,
+            'nome' => 'Cozinheiro',
+            'raridade' => 'E'
+        ];
+        
+        $dado = [
+            'nome' => 'Cozinheiro Maluco',
+            'raridade'=> 'D'
+        ];
+        $classeAtualizado = (object) [
+            'classe_id' => 2,
+            'nome' => 'Cozinheiro Maluco',
+            'raridade' => 'D'
+        ];
+
+        $this->classeMock
+        ->shouldReceive('getClasseById')
+        ->with(2)
+        ->once()
+        ->andReturn($classeAntigo);
+
+        $this->classeMock
+        ->shouldReceive('updateClasseById')
+        ->with(2, $dado)
+        ->once()
+        ->andReturn($classeAtualizado);
+
+        $responce = $this->putJson('api/classe/2', $dado);
+
+        $responce->assertOk()
+        ->assertJsonStructure([
+            'message',
+            'data' => [
+                'antes',
+                'depois'
+            ]
+        ]);
+
     }
 }
