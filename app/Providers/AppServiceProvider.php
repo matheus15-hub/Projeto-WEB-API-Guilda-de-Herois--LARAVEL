@@ -2,18 +2,19 @@
 
 namespace App\Providers;
 
+use App\Interfaces\AventureiroInterface;
 use App\Interfaces\ClasseRepositoryInterface;
 use App\Interfaces\GuildaRepositoryInterface;
+use App\Interfaces\MissaoRepositoryInterface;
+use App\Interfaces\MissoesCompletadasRepositoryInterface;
+use App\Interfaces\MonstroRepositoryInterface;
 use App\Repositories\AventureiroRepository;
 use App\Repositories\ClasseRepository;
 use App\Repositories\GuildaRepository;
-use Illuminate\Support\ServiceProvider;
-use App\Interfaces\AventureiroInterface;
-use App\Interfaces\MissoesCompletadasRepositoryInterface;
+use App\Repositories\MissaoRepository;
 use App\Repositories\MissoesCompletadasRepository;
-use App\Interfaces\MonstroRepositoryInterface;
 use App\Repositories\MonstroRepository;
-use App\Services\AventureiroService;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Vincula a AventureiroInterface principal
+        $this->app->bind(
+            AventureiroInterface::class,
+            AventureiroRepository::class
+        );
+
+        // Alias de compatibilidade caso alguma classe (como AventureiroService) solicite AventureiroRepositoryInterface
+        $this->app->bind(
+            'App\Interfaces\AventureiroRepositoryInterface',
+            AventureiroRepository::class
+        );
+
         $this->app->bind(
             ClasseRepositoryInterface::class,
             ClasseRepository::class
@@ -33,10 +46,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            AventureiroRepositoryInterface::class,
-            AventureiroRepository::class
+            MissaoRepositoryInterface::class,
+            MissaoRepository::class
         );
-         $this->app->bind(
+
+        $this->app->bind(
             MissoesCompletadasRepositoryInterface::class,
             MissoesCompletadasRepository::class
         );

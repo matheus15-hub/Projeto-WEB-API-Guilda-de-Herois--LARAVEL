@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Raridade;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class ClasseWebRequest extends FormRequest
 {
@@ -16,28 +16,17 @@ class ClasseWebRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' => ['required', 'string', 'min:3', 'max:150'],
-            'descricao' => ['required', 'string', 'max:1000'],
-            'raridade' => ['required', Rule::enum(Raridade::class)],
-        ];
-    }
-
-    public function attributes(): array
-    {
-        return [
-            'nome' => 'nome',
-            'descricao' => 'descrição',
-            'raridade' => 'raridade',
+            'nome'        => ['nullable', 'string', 'max:50'],
+            'classe_nome' => ['nullable', 'string', 'max:50'],
+            'descricao'   => ['nullable', 'string', 'max:255'],
+            'raridade'    => ['required', new Enum(Raridade::class)],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'required' => 'O campo :attribute é obrigatório.',
-            'min.string' => 'O campo :attribute deve ter pelo menos :min caracteres.',
-            'max.string' => 'O campo :attribute deve ter no máximo :max caracteres.',
-            'enum' => 'Selecione uma raridade válida.',
+            'raridade.required' => 'Selecione uma raridade válida.',
         ];
     }
 }

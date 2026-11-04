@@ -27,7 +27,7 @@
             @if (request('busca'))
                 <a href="{{ route('dashboard') }}" class="btn btn-ghost">Limpar</a>
             @endif
-            <a href="{{ route('aventureiros.index') }}#novo" class="btn btn-outline">+ Novo aventureiro</a>
+            <a href="{{ route('aventureiros.create') }}" class="btn btn-outline">+ Novo aventureiro</a>
         </form>
 
         @if ($aventureiros->isEmpty())
@@ -49,16 +49,20 @@
                     </thead>
                     <tbody>
                         @foreach ($aventureiros as $a)
+                            @php
+                                // Garante a extração do ID correto seja do Model Eloquent ou stdClass
+                                $id = is_object($a) ? ($a->aventureiro_id ?? $a->id) : $a;
+                            @endphp
                             <tr>
-                                <td><a href="{{ route('aventureiros.show', $a) }}" class="row-link">{{ $a->aventureiro_nome }}</a></td>
-                                <td>{{ $a->classe?->classe_nome ?? '—' }}</td>
+                                <td><a href="{{ route('aventureiros.show', $id) }}" class="row-link">{{ $a->aventureiro_nome }}</a></td>
+                                <td>{{ is_object($a->classe ?? null) ? $a->classe->classe_nome : ($a->classe_nome ?? '—') }}</td>
                                 <td class="num">{{ $a->idade ?? '—' }}</td>
                                 <td class="num">{{ $a->experiencia ?? 0 }}</td>
                                 <td class="num">{{ $a->ouro ?? 0 }}</td>
                                 <td class="actions">
-                                    <a href="{{ route('aventureiros.show', $a) }}">Ver</a>
-                                    <a href="{{ route('aventureiros.missoes.index', $a) }}">Missões</a>
-                                    <a href="{{ route('aventureiros.edit', $a) }}">Editar</a>
+                                    <a href="{{ route('aventureiros.show', $id) }}">Ver</a>
+                                    <a href="{{ route('aventureiros.missoes.index', $id) }}">Missões</a>
+                                    <a href="{{ route('aventureiros.edit', $id) }}">Editar</a>
                                 </td>
                             </tr>
                         @endforeach

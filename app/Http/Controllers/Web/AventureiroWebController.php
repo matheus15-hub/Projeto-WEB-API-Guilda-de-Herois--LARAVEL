@@ -30,13 +30,11 @@ class AventureiroWebController extends Controller
     }
 
     /**
-     * Exibe o formulário de criação de aventureiro.
+     * Redireciona a rota de criação para a index (onde fica o formulário de cadastro).
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        $classes = Classe::orderBy('classe_nome')->get();
-
-        return view('aventureiros.create', compact('classes'));
+        return $this->index($request);
     }
 
     /**
@@ -52,7 +50,7 @@ class AventureiroWebController extends Controller
             'experiencia'      => $dados['experiencia'] ?? 0,
             'ouro'             => $dados['ouro'] ?? 0,
             'id_classe'        => $dados['id_classe'],
-            'id_guilda'        => $this->guildaId($request), // Injeta a guilda automaticamente do usuário logado
+            'id_guilda'        => $this->guildaId($request),
         ]);
 
         return redirect()->route('aventureiros.index')

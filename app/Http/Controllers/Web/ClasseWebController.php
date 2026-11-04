@@ -14,60 +14,62 @@ class ClasseWebController extends Controller
 {
     public function index(): View
     {
-            return view('classes.index', [
-                'classes' => Classe::withCount('aventureiros')->orderBy('classe_nome')->get(),
-            ]);
+        return view('classes.index', [
+            'classes' => Classe::withCount('aventureiros')->orderBy('classe_nome')->get(),
+        ]);
     }
+
     public function create(): View 
     {
-            return view('classes.create', ['raridades' => Raridade::cases()]);
+        return view('classes.create', ['raridades' => Raridade::cases()]);
     }
 
     public function store(ClasseWebRequest $request): RedirectResponse
     {
-            $dados = $request->validated();
+        $dados = $request->validated();
 
-            Classe::create([
-                'classe_nome' => $dados['nome'],
-                'descricao' => $dados['descricao'],
-                'raridade' => $dados['raridade'],
-            ]);
+        Classe::create([
+            'classe_nome' => $dados['nome'] ?? $dados['classe_nome'],
+            'descricao'   => isset($dados['descricao']) ? mb_substr($dados['descricao'], 0, 50) : null,
+            'raridade'    => $dados['raridade'],
+        ]);
 
-            return redirect()->route('classes.index')
+        return redirect()->route('classes.index')
             ->with('sucesso', 'Classe cadastrada com sucesso.');
     }
 
     public function edit(Classe $classe): View
     {
-            return view('classes.edit', [
-                'classe' => $classe,
-                'raridades' => Raridade::cases(),
-            ]);
+        return view('classes.edit', [
+            'classe'    => $classe,
+            'raridades' => Raridade::cases(),
+        ]);
     }
 
     public function update(ClasseWebRequest $request, Classe $classe): RedirectResponse
     {
-            $dados = $request->validated();
+        $dados = $request->validated();
 
-            $classe->update([
-                'classe_nome' => $dados['nome'],
-                'descricao' => $dados['descricao'],
-                'raridade' => $dados['raridade'],
-            ]);
-            return redirect()->route('classes.index')
-                ->with('sucesso', 'Classe atualizada com sucesso.');
+        $classe->update([
+            'classe_nome' => $dados['nome'] ?? $dados['classe_nome'],
+            'descricao'   => isset($dados['descricao']) ? mb_substr($dados['descricao'], 0, 50) : null,
+            'raridade'    => $dados['raridade'],
+        ]);
+
+        return redirect()->route('classes.index')
+            ->with('sucesso', 'Classe atualizada com sucesso.');
     }
 
     public function destroy(Classe $classe): RedirectResponse
     {
         try {
             $classe->delete();
-            } catch (QueryException $e) {
-                return redirect()->route('classes.index')
-                    ->with('erro', 'Não foi possível excluir: existem aventureiros usando esta classe.');
-            }
+        } catch (QueryException $e) {
+            return redirect()->route('classes.index')
+                ->with('erro', 'Não foi possível excluir: existem aventureiros usando esta classe.');
+        }
+
         return redirect()->route('classes.index')
             ->with('sucesso', 'Classe excluída com sucesso.');
     }
-    }
-
+}
