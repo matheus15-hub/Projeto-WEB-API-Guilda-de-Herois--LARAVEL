@@ -13,4 +13,10 @@ interface MissoesCompletadasRepositoryInterface
     public function buscarDadosRecompensaVarias(array $idsMissao): Collection;
 
     public function inserirVarias(array $linhas): void;
+
+    public function listarConcluidasPorAventureiro(int $idAventureiro);
+
+    public function listarDisponiveisPorAventureiro(int $idAventureiro);
+
+    public function aventureiroJaConcluiu(int $idAventureiro, int $idMissao): bool;
 }

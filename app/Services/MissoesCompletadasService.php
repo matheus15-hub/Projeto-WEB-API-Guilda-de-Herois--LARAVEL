@@ -159,5 +159,18 @@ class MissoesCompletadasService{
             return $dropXp * $quantidade;
         }
 
+    public function listarConcluidasPorAventureiro(int $idAventureiro)
+    {
+        return $this->repository->listarConcluidasPorAventureiro($idAventureiro);
+    }
 
+    public function listarDisponiveisPorAventureiro(int $idAventureiro)
+    {
+        return $this->repository->listarDisponiveisPorAventureiro($idAventureiro);
+    }
+
+    public function aventureiroJaConcluiu(int $idAventureiro, int $idMissao): bool
+    {
+        return $this->repository->aventureiroJaConcluiu($idAventureiro, $idMissao);
+    }
 }

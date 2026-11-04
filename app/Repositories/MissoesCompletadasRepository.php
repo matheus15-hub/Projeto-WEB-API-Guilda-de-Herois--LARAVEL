@@ -40,4 +40,44 @@ class MissoesCompletadasRepository implements MissoesCompletadasRepositoryInterf
     {
         DB::table('missoes_completadas')->insert($linhas);
     }
+
+    public function listarConcluidasPorAventureiro(int $idAventureiro)
+    {
+        return DB::table('missoes_completadas as mc')
+            ->join('missao as m', 'm.missao_id', '=', 'mc.id_missao')
+            ->where('mc.id_aventureiro', $idAventureiro)
+            ->orderBy('m.missao_nome')
+            ->get([
+                'm.missao_id',
+                'm.missao_nome',
+                'm.dificuldade',
+                'mc.ouro_recebido',
+                'mc.xp_recebido'
+            ]);
+    }
+
+    public function listarDisponiveisPorAventureiro(int $idAventureiro)
+    {
+        return DB::table('missao as m')
+            ->leftJoin('monstro as mt', 'mt.monstro_id', '=', 'm.id_monstro')
+            ->whereNotIn('m.missao_id', function ($query) use ($idAventureiro) {
+                $query->select('id_missao')
+                    ->from('missoes_completadas')
+                    ->where('id_aventureiro', $idAventureiro);
+            })
+            ->orderBy('m.missao_nome')
+            ->select(
+                'm.*',
+                'mt.monstro_nome'
+            )
+            ->get();
+    }
+
+    public function aventureiroJaConcluiu(int $idAventureiro, int $idMissao): bool
+    {
+        return DB::table('missoes_completadas')
+            ->where('id_aventureiro', $idAventureiro)
+            ->where('id_missao', $idMissao)
+            ->exists();
+    }
 }
