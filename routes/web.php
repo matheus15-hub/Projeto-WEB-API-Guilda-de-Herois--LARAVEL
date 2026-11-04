@@ -26,9 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Aventureiros 
+    // Aventureiros (Agora inclui a rota /aventureiros/create)
     Route::resource('aventureiros', AventureiroWebController::class)
-        ->except('create')
         ->parameters(['aventureiros' => 'aventureiro']);
 
     // Missões de cada aventureiro
