@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Aventureiro;
-use App\Models\Missao;
 use App\Services\MissoesCompletadasService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AventureiroMissaoController extends Controller
@@ -22,76 +20,74 @@ class AventureiroMissaoController extends Controller
     {
         $this->daMinhaGuilda($request, $aventureiro);
 
-        $aventureiro->refresh();
+        $concluidas = $this->missoesCompletadas
+            ->listarConcluidasPorAventureiro($aventureiro->aventureiro_id);
 
-        $concluidas = DB::table('missoes_completadas as mc')
-            ->join('missao as m', 'm.missao_id', '=', 'mc.id_missao')
-            ->where('mc.id_aventureiro', $aventureiro->aventureiro_id)
-            ->orderBy('m.missao_nome')
-            ->get(['m.missao_id', 'm.missao_nome', 'm.dificuldade', 'mc.ouro_recebido', 'mc.xp_recebido']);
+        $disponiveis = $this->missoesCompletadas
+            ->listarDisponiveisPorAventureiro($aventureiro->aventureiro_id);
 
-        $disponiveis = Missao::with('monstro')
-            ->whereNotIn('missao_id', $concluidas->pluck('missao_id'))
-            ->orderBy('missao_nome')
-            ->get();
-
-        return view('aventureiros.missoes', compact('aventureiro', 'concluidas', 'disponiveis'));
+        return view('aventureiros.missoes', compact(
+            'aventureiro',
+            'concluidas',
+            'disponiveis'
+        ));
     }
 
     public function store(Request $request, Aventureiro $aventureiro): RedirectResponse
-{
-    $this->daMinhaGuilda($request, $aventureiro);
+    {
+        $this->daMinhaGuilda($request, $aventureiro);
 
-    $dados = $request->validate(
-        [
-            'missoes' => ['required', 'array', 'min:1'],
-            'missoes.*' => ['integer', 'exists:missao,missao_id'],
-        ],
-        [
-            'missoes.required' => 'Selecione pelo menos uma missão.',
-            'missoes.min' => 'Selecione pelo menos uma missão.',
-            'missoes.*.exists' => 'Uma das missões selecionadas não existe.',
-        ]
-    );
+        $dados = $request->validate(
+            [
+                'missoes' => ['required', 'array', 'min:1'],
+                'missoes.*' => ['integer', 'exists:missao,missao_id'],
+            ],
+            [
+                'missoes.required' => 'Selecione pelo menos uma missão.',
+                'missoes.min' => 'Selecione pelo menos uma missão.',
+                'missoes.*.exists' => 'Uma das missões selecionadas não existe.',
+            ]
+        );
 
-    $total = 0;
-    $falhas = [];
+        $total = 0;
+        $falhas = [];
 
-    foreach ($dados['missoes'] as $idMissao) {
-        $jaConcluiu = DB::table('missoes_completadas')
-            ->where('id_aventureiro', $aventureiro->aventureiro_id)
-            ->where('id_missao', $idMissao)
-            ->exists();
+        foreach ($dados['missoes'] as $idMissao) {
+            $jaConcluiu = $this->missoesCompletadas
+                ->aventureiroJaConcluiu(
+                    $aventureiro->aventureiro_id,
+                    (int) $idMissao
+                );
 
-        if ($jaConcluiu) {
-            continue;
+            if ($jaConcluiu) {
+                continue;
+            }
+
+            try {
+                $this->missoesCompletadas->createMissaoCompleta([
+                    'id_aventureiro' => $aventureiro->aventureiro_id,
+                    'id_missao' => (int) $idMissao,
+                ]);
+
+                $total++;
+            } catch (\Throwable $e) {
+                report($e);
+                $falhas[] = 'Missão ' . $idMissao;
+            }
         }
 
-        try {
-            $this->missoesCompletadas->createMissaoCompleta([
-                'id_aventureiro' => $aventureiro->aventureiro_id,
-                'id_missao' => (int) $idMissao,
-            ]);
+        $resposta = redirect()->route('aventureiros.missoes.index', $aventureiro);
 
-            $total++;
-        } catch (\Throwable $e) {
-            report($e);
-            $falhas[] = 'Missão ' . $idMissao;
+        if ($total > 0) {
+            $resposta->with('sucesso', $total . ($total === 1 ? ' missão vinculada.' : ' missões vinculadas.'));
         }
+
+        if ($falhas) {
+            $resposta->with('erro', 'Não foi possível vincular: ' . implode(' | ', $falhas));
+        }
+
+        return $resposta;
     }
-
-    $resposta = redirect()->route('aventureiros.missoes.index', $aventureiro);
-
-    if ($total > 0) {
-        $resposta->with('sucesso', $total . ($total === 1 ? ' missão vinculada.' : ' missões vinculadas.'));
-    }
-
-    if ($falhas) {
-        $resposta->with('erro', 'Não foi possível vincular: ' . implode(' | ', $falhas));
-    }
-
-    return $resposta;
-}
         public function destroy (Request $request, Aventureiro $aventureiro, Missao $missao): RedirectResponse
         {
             $this->daMinhaGuilda($request, $aventureiro);
