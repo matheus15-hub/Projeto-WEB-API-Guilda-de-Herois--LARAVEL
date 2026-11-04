@@ -6,7 +6,7 @@
 <div class="page">
     <h1>Editar {{ $aventureiro->aventureiro_nome }}</h1>
 
-    <form method="POST" action="{{ route('aventureiros.update', $aventureiro) }}" novalidate>
+    <form method="POST" action="{{ route('aventureiros.update', request()->route('aventureiro')) }}" novalidate>
         @csrf
         @method('PUT')
 
