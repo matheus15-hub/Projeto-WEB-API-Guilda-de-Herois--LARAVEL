@@ -1,44 +1,86 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Interfaces\MissaoRepositoryInterface;
 use App\Models\Missao;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
-class MissaoService
+class MissaoRepository implements MissaoRepositoryInterface
 {
-    public function __construct(
-        private MissaoRepositoryInterface $repository
-    ) {}
-
-    public function createMissao(array $dados): Missao
+    public function create(array $dados): Missao
     {
-        return $this->repository->create($dados);
+        $missao = new Missao();
+
+        $missao->missao_nome = $dados['nome'];
+        $missao->recompensa_ouro = $dados['recompensa'];
+        $missao->id_monstro = $dados['id_monstro'];
+        $missao->quantidade_monstro = $dados['quantidade_monstros'];
+        $missao->dificuldade = $dados['dificuldade'];
+
+        $missao->save();
+
+        return $missao->refresh();
     }
 
-    public function getMissaoById(int $id): Missao
+    public function findById(int $id): Missao
     {
-        return $this->repository->findById($id);
+        return Missao::findOrFail($id);
     }
 
-    public function getMissaoAll(): Collection
+    public function all(): Collection
     {
-        return $this->repository->all();
+        return Missao::all();
     }
 
-    public function updateMissaoById(int $id, array $dados): Missao
+    public function update(int $id, array $dados): Missao
     {
-        return $this->repository->update($id, $dados);
+        $missao = $this->findById($id);
+
+        if (isset($dados['nome'])) {
+            $missao->missao_nome = $dados['nome'];
+        }
+
+        if (isset($dados['recompensa'])) {
+            $missao->recompensa_ouro = $dados['recompensa'];
+        }
+
+        if (isset($dados['id_monstro'])) {
+            $missao->id_monstro = $dados['id_monstro'];
+        }
+
+        if (isset($dados['quantidade_monstros'])) {
+            $missao->quantidade_monstro = $dados['quantidade_monstros'];
+        }
+
+        if (isset($dados['dificuldade'])) {
+            $missao->dificuldade = $dados['dificuldade'];
+        }
+
+        $missao->save();
+
+        return $missao->refresh();
     }
 
-    public function deleteMissaoById(int $id): void
+    public function delete(int $id): void
     {
-        $this->repository->delete($id);
+        $missao = $this->findById($id);
+
+        $missao->delete();
     }
 
     public function cadastrarMissao(array $dados): void
     {
-        $this->repository->cadastrarMissao($dados);
+        DB::statement(
+            'CALL pr_cadastrar_missao(?, ?, ?, ?, ?)',
+            [
+                $dados['nome'],
+                $dados['dificuldade'],
+                $dados['recompensa'],
+                $dados['id_monstro'],
+                $dados['quantidade_monstros']
+            ]
+        );
     }
 }

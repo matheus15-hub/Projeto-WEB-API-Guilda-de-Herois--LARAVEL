@@ -1,76 +1,44 @@
 <?php
+
 namespace App\Services;
 
+use App\Interfaces\MissaoRepositoryInterface;
 use App\Models\Missao;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 
-class MissaoService{
+class MissaoService
+{
+    public function __construct(
+        private MissaoRepositoryInterface $repository
+    ) {}
 
-    public function createMissao(array $dados) : Missao
+    public function createMissao(array $dados): Missao
     {
-        $missao = new Missao();
-
-        $missao->missao_nome = $dados['nome'];
-        $missao->recompensa_ouro = $dados['recompensa'];
-        $missao->id_monstro = $dados['id_monstro'];
-        $missao->quantidade_monstro = $dados['quantidade_monstros'];
-        $missao->dificuldade = $dados['dificuldade'];
-
-        $missao->save();
-
-        return $missao->refresh();
-
+        return $this->repository->create($dados);
     }
 
-    public function getMissaoById(int $id) : Missao
+    public function getMissaoById(int $id): Missao
     {
-        return Missao::findOrFail($id);    
+        return $this->repository->findById($id);
     }
-    public function getMissaoAll() : Collection
-    {
-        return Missao::all();   
-    }
-    public function updateMissaoById(int $id, array $dados) : Missao
-    {
-        $missao = $this->getMissaoById($id);
 
-        if(isset($dados['nome'])){
-            $missao->missao_nome = $dados['nome'];
-        }
-        if(isset($dados['recompensa'])){
-             $missao->recompensa_ouro = $dados['recompensa'];
-        }
-        if(isset($dados['id_monstro'])){
-             $missao->id_monstro = $dados['id_monstro'];
-        }
-        if(isset($dados['quantidade_monstros'])){
-            $missao->quantidade_monstro = $dados['quantidade_monstros'];
-        }
-        if(isset($dados['dificuldade'])){
-             $missao->dificuldade = $dados['dificuldade'];
-        }
-       
-        $missao->save();
+    public function getMissaoAll(): Collection
+    {
+        return $this->repository->all();
+    }
 
-        return $missao->refresh();
-    }
-    public function deleteMissaoById($id) : void
+    public function updateMissaoById(int $id, array $dados): Missao
     {
-        $missao = $this->getMissaoById($id);
-        $missao->delete();
+        return $this->repository->update($id, $dados);
     }
-    public function cadastrarMissao(array $dados)
+
+    public function deleteMissaoById(int $id): void
     {
-        DB::statement(
-            'CALL pr_cadastrar_missao(?, ?, ?, ?, ?)',
-            [
-                $dados['nome'],
-                $dados['dificuldade'],
-                $dados['recompensa'],
-                $dados['id_monstro'],
-                $dados['quantidade_monstros']
-            ]
-        );
+        $this->repository->delete($id);
+    }
+
+    public function cadastrarMissao(array $dados): void
+    {
+        $this->repository->cadastrarMissao($dados);
     }
 }

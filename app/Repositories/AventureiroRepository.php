@@ -69,8 +69,6 @@ class AventureiroRepository implements AventureiroRepositoryInterface
 
     public function delete(int $id): void
     {
-        $this->findById($id);
-
         DB::table('aventureiro')
             ->where('aventureiro_id', $id)
             ->delete();

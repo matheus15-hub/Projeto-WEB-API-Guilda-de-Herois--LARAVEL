@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AventureiroRequest;
 use App\Http\Requests\AventureiroUpdateRequest;
-use App\Interfaces\AventureiroInterface;
+use App\Services\AventureiroService;
 use Illuminate\Http\JsonResponse;
 
 class AventureiroController extends Controller
 {
     public function __construct(
-        private AventureiroInterface $aventureiroService
+        private AventureiroService $aventureiroService
     ) {}
 
     public function index(): JsonResponse

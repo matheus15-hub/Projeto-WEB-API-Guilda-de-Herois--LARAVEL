@@ -2,17 +2,15 @@
 
 namespace App\Services;
 
-use App\Interfaces\AventureiroInterface;
 use App\Interfaces\AventureiroRepositoryInterface;
-use App\Repositories\AventureiroRepository;
+
 use Illuminate\Support\Collection;
 use stdClass;
 
-class AventureiroService implements AventureiroInterface
+class AventureiroService 
 {
     public function __construct(
         private AventureiroRepositoryInterface $repository,
-        private GuildaService $guildaService
     ) {}
 
     public function createAventureiro(array $dados): stdClass
@@ -32,23 +30,16 @@ class AventureiroService implements AventureiroInterface
 
     public function updateAventureiroById(int $id, array $dados): stdClass
     {
+        $this->existAventureiro($id);
         return $this->repository->update($id, $dados);
     }
 
     public function deleteAventureiroById(int $id): void
     {
+        $this->existAventureiro($id);
         $this->repository->delete($id);
     }
 
-    public function calcularOuroGuilda(int $idGuilda): int
-    {
-        return $this->guildaService->calcularOuroGuilda($idGuilda);
-    }
-
-    public function listarMissoesCompletadasGuilda(int $idGuilda)
-    {
-        return $this->guildaService->listarMissoesCompletadasGuilda($idGuilda);
-    }
 
     public function transferirAventureiro(int $idAventureiro, ?int $novaGuildaId): void
     {
@@ -58,5 +49,9 @@ class AventureiroService implements AventureiroInterface
     public function listarPorGuilda(int $idGuilda, ?string $busca = null)
     {
         return $this->repository->listarPorGuilda($idGuilda, $busca);
+    }
+
+    public function existAventureiro($id){
+        return $this->repository->existe($id);
     }
 }

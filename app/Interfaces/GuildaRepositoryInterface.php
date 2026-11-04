@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Interfaces;
 
 interface GuildaRepositoryInterface
@@ -12,4 +13,8 @@ interface GuildaRepositoryInterface
     public function update(int $id, array $dados);
 
     public function delete(int $id);
+
+    public function calcularOuroGuilda(int $idGuilda): int;
+
+    public function listarMissoesCompletadasGuilda(int $idGuilda);
 }
