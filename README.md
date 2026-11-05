@@ -50,9 +50,13 @@ O `DatabaseSeeder` do projeto cria um usuário de teste com os seguintes dados, 
 
 | Campo | Valor |
 |---|---|
-| Nome | `Test User` |
-| E-mail cadastrado | `test@example.com` |
-| Senha | `password` |
+| Nome | `ProfDionatan` |
+| Senha | `SenhaMuitoDificil1234` |
+
+| Campo | Valor |
+|---|---|
+| Nome | `ProfBruno` |
+| Senha | `SenhaFacilDemais1234` |
 
 Para criar esse usuário em um ambiente local, execute:
 ```bash
