@@ -331,6 +331,15 @@ PUT http://127.0.0.1:8000/api/missoes_completas/10/5
  "id_aventureiro": 12
 }
 ```
+### Paginação
+
+A listagem de missões completadas possui suporte à paginação, permitindo controlar a quantidade de registros retornados por consulta.
+
+Para definir a quantidade de registros por página, basta utilizar o parâmetro per_page:
+
+GET /api/missoes_completas?per_page=20
+
+O sistema utiliza 10 registros por página como padrão e permite valores entre 1 e 200, evitando consultas com uma quantidade excessiva de registros.
 Atenção
 
 As rotas individuais de consulta, atualização e exclusão de missões completadas precisam de ajuste: existe divergência entre os parâmetros das rotas e os esperados pelo controller. A rota de cadastro em lote de missões também aponta para um método ainda não implementado.
