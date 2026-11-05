@@ -311,6 +311,20 @@ input[type="checkbox"] { width: 1.05rem; height: 1.05rem; accent-color: var(--de
 }
 
 /* ---------- Login e cadastro ---------- */
+.feature-list {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    max-width: 38ch;
+}
+.feature-list li {
+    padding-left: 1rem;
+    border-left: 3px solid var(--destaque-escuro);
+    color: var(--texto-suave);
+}
+.feature-list strong { display: block; color: var(--destaque); }
 .auth { display: grid; grid-template-columns: 1.1fr 1fr; min-height: 100vh; }
 
 .auth-side {
@@ -357,4 +371,44 @@ input[type="checkbox"] { width: 1.05rem; height: 1.05rem; accent-color: var(--de
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Páginas de erro (429, etc.) ---------- */
+.error-card {
+    max-width: 520px;
+    margin: 4rem auto 0;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--papel-2), var(--papel));
+    border: 1px solid var(--borda);
+    border-top: 4px solid var(--perigo);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+}
+.error-code {
+    margin: 0;
+    font-family: var(--fonte-titulo);
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--perigo-forte);
+    letter-spacing: .04em;
+}
+.error-card h1 { margin: .5rem 0 .75rem; }
+.error-text { color: var(--texto-suave); }
+.error-wait {
+    margin: 1.25rem 0 1.5rem;
+    font-size: 1.1rem;
+}
+.error-wait strong {
+    display: inline-block;
+    min-width: 3.5ch;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.4rem;
+}
+.error-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .75rem;
 }
