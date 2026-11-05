@@ -5,10 +5,10 @@ namespace Tests\Feature\Api;
 use Tests\TestCase;
 use Mockery;
 use App\Services\MonstroService;
-use App\Models\Monstro;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\PresenceVerifierInterface;
 
-#php artisan test --filter=MonstroApiTest
+// php artisan test --filter=MonstroApiTest
 class MonstroApiTest extends TestCase
 {
     private $monstroMock;
@@ -25,7 +25,7 @@ class MonstroApiTest extends TestCase
         );
 
         $presenceVerifier = Mockery::mock(
-            \Illuminate\Validation\PresenceVerifierInterface::class
+            PresenceVerifierInterface::class
         );
 
         $presenceVerifier->shouldReceive('getCount')->andReturn(1);
@@ -43,17 +43,17 @@ class MonstroApiTest extends TestCase
 
     public function test_consultar_monstros(): void
     {
-        $monstro1 = new Monstro([
+        $monstro1 = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 100
-        ]);
-        $monstro1->monstro_id = 1;
+        ];
 
-        $monstro2 = new Monstro([
+        $monstro2 = (object) [
+            'monstro_id' => 2,
             'monstro_nome' => 'Goblin',
             'drop_xp' => 50
-        ]);
-        $monstro2->monstro_id = 2;
+        ];
 
         $retorno = new Collection([
             $monstro1,
@@ -92,11 +92,11 @@ class MonstroApiTest extends TestCase
             'drop_xp' => 100
         ];
 
-        $retorno = new Monstro([
+        $retorno = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 100
-        ]);
-        $retorno->monstro_id = 1;
+        ];
 
         $this->monstroMock
             ->shouldReceive('createMonstro')
@@ -116,13 +116,24 @@ class MonstroApiTest extends TestCase
             ]);
     }
 
+    public function test_campos_obrigatorios_monstro(): void
+    {
+        $response = $this->postJson('/api/monstro', []);
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors([
+                'nome',
+                'drop_xp'
+            ]);
+    }
+
     public function test_consultar_monstro_por_id(): void
     {
-        $retorno = new Monstro([
+        $retorno = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 100
-        ]);
-        $retorno->monstro_id = 1;
+        ];
 
         $this->monstroMock
             ->shouldReceive('getMonstroById')
@@ -149,17 +160,17 @@ class MonstroApiTest extends TestCase
             'drop_xp' => 200
         ];
 
-        $antes = new Monstro([
+        $antes = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 100
-        ]);
-        $antes->monstro_id = 1;
+        ];
 
-        $depois = new Monstro([
+        $depois = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 200
-        ]);
-        $depois->monstro_id = 1;
+        ];
 
         $this->monstroMock
             ->shouldReceive('getMonstroById')
@@ -197,11 +208,11 @@ class MonstroApiTest extends TestCase
 
     public function test_deletar_monstro(): void
     {
-        $retorno = new Monstro([
+        $retorno = (object) [
+            'monstro_id' => 1,
             'monstro_nome' => 'Dragão',
             'drop_xp' => 100
-        ]);
-        $retorno->monstro_id = 1;
+        ];
 
         $this->monstroMock
             ->shouldReceive('getMonstroById')

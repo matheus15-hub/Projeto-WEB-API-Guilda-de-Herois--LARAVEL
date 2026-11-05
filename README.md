@@ -1,134 +1,396 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛡️ Projeto WEB/API — Guilda de Heróis
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📚 Índice
 
-## About Laravel
+- [Sobre o projeto](#-sobre-o-projeto)
+- [Como acessar a área Web](#-como-acessar-a-área-web)
+  - [Entrar com um usuário](#entrar-com-um-usuário)
+  - [Criar uma conta](#criar-uma-conta)
+  - [Funcionamento das páginas Web](#funcionamento-das-páginas-web)
+- [Como utilizar a API](#-como-utilizar-a-api)
+  - [Aventureiro](#31-aventureiro)
+  - [Missão](#32-missão)
+  - [Classe](#33-classe)
+  - [Guilda](#34-guilda)
+  - [Monstro](#35-monstro)
+  - [Missões completadas](#36-missões-completadas)
+  - [Utilização do ID retornado](#37-como-utilizar-o-id-retornado-para-atualizar)
+  - [Respostas da API](#38-respostas-da-api)
+- [Testes automatizados](#-testes-automatizados)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📖 Sobre o projeto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O Guilda de Heróis é um sistema para auxiliar o secretário de uma guilda no gerenciamento de seus aventureiros e das atividades realizadas por eles. Pelo sistema, é possível cadastrar e consultar aventureiros, organizar classes, monstros e missões, além de registrar quais missões foram concluídas por cada aventureiro.
 
-## Learning Laravel
+Cada usuário da área Web fica vinculado a uma guilda. Depois de entrar no sistema, o secretário acessa o painel da sua guilda e acompanha os aventureiros vinculados a ela. Também pode consultar e administrar classes e missões, além de registrar, trocar ou remover o vínculo entre um aventureiro e uma missão.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Além da área Web, o projeto disponibiliza uma API REST que permite consultar, cadastrar, atualizar e excluir informações por meio de requisições HTTP. As respostas da API são enviadas em JSON.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🌐 Como acessar a área Web
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+Com o projeto configurado e o banco de dados conectado, inicie o servidor local:
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php artisan serve
 ```
+Depois, acesse pelo navegador:
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+- **Página inicial:** `http://127.0.0.1:8000/`
 
-## Contributing
+- **Entrar:** `http://127.0.0.1:8000/login`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Criar conta:** `http://127.0.0.1:8000/cadastro`
 
-## Code of Conduct
+### 2.1. Entrar com um usuário
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Na tela de login, informe o **nome do usuário** e a **senha**. O formulário de login utiliza o campo `name`; portanto, o acesso não é feito pelo e-mail.
 
-## Security Vulnerabilities
+O `DatabaseSeeder` do projeto cria um usuário de teste com os seguintes dados, desde que a seed tenha sido executada:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Campo | Valor |
+|---|---|
+| Nome | `Test User` |
+| E-mail cadastrado | `test@example.com` |
+| Senha | `password` |
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# Projeto-WEB-API-Guilda-de-Herois
->>>>>>> 5fdd916bba963de9fe946ed551ec06ab523debc7
-
-
-# CONEXÃO COM O BANCO DE DADOS
-
-## 1. Objetivo
-
-O objetivo desse processo foi conectar o projeto Laravel ao banco de dados PostgreSQL que já existia no Neon e aproveitar as tabelas que estavam prontas. Em vez de criar tudo novamente por meio de migrations, utilizei uma ferramenta para gerar os Models com base na estrutura do banco.
-
-## 2. Configuração do banco
-
-Primeiro, configurei a conexão com o PostgreSQL no arquivo `.env`, informando os dados necessários para acessar o banco. Depois, conferi o arquivo `config/database.php` para ajustar as configurações da conexão `pgsql`.
-
-Como as tabelas estavam dentro de um schema específico, também precisei configurar o `search_path` e a opção `schema` com o nome correto: `Joao_Victor_trabalho_BD`. Essa parte foi importante porque, inicialmente, o gerador não estava encontrando as tabelas.
-
-Para verificar se a conexão estava funcionando, utilizei o comando:
-
+Para criar esse usuário em um ambiente local, execute:
 ```bash
-php artisan db:show
+php artisan db:seed
 ```
+**Atenção:** esse usuário de teste não é associado a uma guilda pelo seeder. Por isso, ele pode entrar no sistema, mas o painel informa que a conta não está vinculada a nenhuma guilda. Para testar o funcionamento completo da área Web, utilize a opção **Cadastre-se** e crie um usuário escolhendo uma guilda existente.
 
-Com ele, consegui visualizar informações do banco e confirmar que o Laravel estava conseguindo acessá-lo.
+### 2.2. Criar uma conta
 
-## 3. Instalação e utilização do Reliese
+Na página `http://127.0.0.1:8000/cadastro`, preencha:
 
-Para gerar os Models sem precisar criá-los manualmente, instalei o pacote Reliese com o seguinte comando:
+- **Nome:** nome que será utilizado no login;
 
-```bash
-composer require reliese/laravel --dev
+- **Guilda:** escolha a guilda que o usuário irá administrar;
+
+- **Senha:** informe uma senha com pelo menos 8 caracteres;
+
+- **Confirmar senha:** repita a senha informada.
+
+Depois de concluir o cadastro, o sistema autentica o usuário e direciona automaticamente para o painel (`/dashboard`).
+
+### 2.3. Funcionamento das páginas Web
+
+Depois de entrar, o usuário é direcionado ao painel da guilda. Nele, são exibidos os aventureiros vinculados à guilda do usuário, com informações como nome, classe, idade, experiência e ouro.
+
+As principais áreas são:
+
+- `/dashboard` — painel da guilda e listagem de seus aventureiros;
+
+- `/aventureiros` — cadastro, consulta, edição e exclusão de aventureiros;
+
+- `/classes` — cadastro, consulta, edição e exclusão de classes;
+
+- `/missoes` — consulta das missões e gerenciamento dos aventureiros vinculados a cada missão;
+
+- `/aventureiros/{id}/missoes` — consulta e gerenciamento das missões de um aventureiro específico.
+
+O acesso às páginas internas exige que o usuário esteja autenticado. Para sair do sistema, utilize a opção de sair, que envia a requisição de logout.
+
+## 🔌 Como utilizar a API
+
+Com o servidor iniciado pelo comando `php artisan serve`, o endereço base da API é:
 ```
-
-Depois, publiquei o arquivo de configuração do pacote:
-
-```bash
-php artisan vendor:publish --tag=reliese-models
+http://127.0.0.1:8000/api
 ```
-
-Esse comando criou o arquivo `config/models.php`, que permite configurar como os Models serão gerados.
-
-Durante os testes, precisei corrigir o nome do schema e limpar o cache das configurações para que o Laravel reconhecesse os valores atualizados. Para isso, utilizei:
-
-```bash
-php artisan config:clear
+As rotas podem ser testadas pelo Postman ou Insomnia. Quando a requisição tiver um corpo, selecione o formato JSON e utilize os cabeçalhos:
+```http
+Accept: application/json
+Content-Type: application/json
 ```
+Os IDs utilizados nos exemplos precisam existir no banco de dados.
 
-Com a configuração corrigida, consegui gerar primeiro o Model da tabela `aventureiro`:
+### 3.1. Aventureiro
 
-```bash
-php artisan code:models --connection=pgsql --schema=Joao_Victor_trabalho_BD --table=aventureiro
+#### Rotas disponíveis
+
+| Método    | Rota                                             | Função                                    |
+| --------- | ------------------------------------------------ | ----------------------------------------- |
+| GET       | `/api/aventureiro`                               | Lista aventureiros                        |
+| POST      | `/api/aventureiro`                               | Cadastra aventureiro                      |
+| GET       | `/api/aventureiro/{id}`                          | Consulta aventureiro                      |
+| PUT/PATCH | `/api/aventureiro/{id}`                          | Atualiza aventureiro                      |
+| DELETE    | `/api/aventureiro/{id}`                          | Exclui aventureiro                        |
+| PATCH     | `/api/aventureiro/{id}/guilda`                   | Transfere aventureiro de guilda           |
+| GET       | `/api/aventureiro/{id}/missoes/concluidas`       | Lista missões concluídas                  |
+| GET       | `/api/aventureiro/{id}/missoes/disponiveis`      | Lista missões disponíveis                 |
+| POST      | `/api/aventureiro/{id}/missoes/completadas/lote` | Cadastro em lote (pendente no controller) |
+
+#### Cadastrar aventureiro
+```http
+POST http://127.0.0.1:8000/api/aventureiro
 ```
-
-Depois, utilizei o comando abaixo para gerar os Models das demais tabelas encontradas no schema:
-
-```bash
-php artisan code:models --connection=pgsql --schema=Joao_Victor_trabalho_BD
+```json
+{
+ "nome": "Gandalf",
+ "idade": 60,
+ "experiencia": 100,
+ "id_classe": 1,
+ "id_guilda": 1
+}
 ```
-
-Por fim, conferi os arquivos criados com o comando:
-
-```bash
-ls -la app/Models
+#### Atualizar aventureiro
+```http
+PUT http://127.0.0.1:8000/api/aventureiro/10
 ```
+```json
+{
+ "nome": "Gandalf, o Cinzento",
+ "idade": 61
+}
+```
+Campos permitidos: `nome`, `idade`, `id_classe` e `id_guilda`. Não é permitido alterar livremente `experiencia` e `ouro`.
 
-## 4. Resultado obtido
+#### Transferir aventureiro de guilda
+```http
+PATCH http://127.0.0.1:8000/api/aventureiro/10/guilda
+```
+```json
+{
+ "id_guilda": 2
+}
+```
+Para remover o vínculo, pode enviar `null`:
+```json
+{
+ "id_guilda": null
+}
+```
+### 3.2. Missão
 
-Com esse procedimento, foi possível gerar os Models correspondentes às tabelas do projeto, como `Aventureiro`, `Classe`, `Guilda`, `Missao`, `MissoesCompletadas` e `Monstro`.
+#### Rotas disponíveis
 
-Esses arquivos ficam no diretório `app/Models` e permitem que o Laravel trabalhe com os registros do banco por meio do Eloquent. Assim, não foi necessário criar migrations para reproduzir as tabelas que já estavam disponíveis no PostgreSQL.
+| Método    | Rota               | Função          |
+| --------- | ------------------ | --------------- |
+| GET       | `/api/missao`      | Lista missões   |
+| POST      | `/api/missao`      | Cadastra missão |
+| GET       | `/api/missao/{id}` | Consulta missão |
+| PUT/PATCH | `/api/missao/{id}` | Atualiza missão |
+| DELETE    | `/api/missao/{id}` | Exclui missão   |
 
-## 5. Conclusão
+#### Cadastrar missão
+```http
+POST http://127.0.0.1:8000/api/missao
+```
+```json
+{
+ "nome": "Derrotar o Dragão",
+ "recompensa": 500,
+ "id_monstro": 1,
+ "quantidade_monstros": 2,
+ "dificuldade": "A"
+}
+```
+#### Atualizar missão
+```http
+PUT http://127.0.0.1:8000/api/missao/5
+```
+```json
+{
+ "recompensa": 650,
+ "dificuldade": "S"
+}
+```
+### 3.3. Classe
 
-Esse processo facilitou o desenvolvimento do projeto, pois permitiu aproveitar o banco de dados existente sem precisar montar novamente toda a sua estrutura. O Reliese ajudou a gerar os Models automaticamente, economizando tempo e deixando o projeto preparado para utilizar as tabelas por meio do Laravel.
+#### Rotas disponíveis
 
+| Método    | Rota               | Função          |
+| --------- | ------------------ | --------------- |
+| GET       | `/api/classe`      | Lista classes   |
+| POST      | `/api/classe`      | Cadastra classe |
+| GET       | `/api/classe/{id}` | Consulta classe |
+| PUT/PATCH | `/api/classe/{id}` | Atualiza classe |
+| DELETE    | `/api/classe/{id}` | Exclui classe   |
+
+#### Cadastrar classe
+```http
+POST http://127.0.0.1:8000/api/classe
+```
+```json
+{
+ "nome": "Mago",
+ "descricao": "Especialista em magia",
+ "raridade": "A"
+}
+```
+#### Atualizar classe
+```http
+PUT http://127.0.0.1:8000/api/classe/3
+```
+```json
+{
+ "descricao": "Especialista em magia e encantamentos",
+ "raridade": "S"
+}
+```
+### 3.4. Guilda
+
+#### Rotas disponíveis
+
+| Método    | Rota                                         | Função                                      |
+| --------- | -------------------------------------------- | ------------------------------------------- |
+| GET       | `/api/guilda`                                | Lista guildas                               |
+| POST      | `/api/guilda`                                | Cadastra guilda                             |
+| GET       | `/api/guilda/{id}`                           | Consulta guilda                             |
+| PUT/PATCH | `/api/guilda/{id}`                           | Atualiza guilda                             |
+| DELETE    | `/api/guilda/{id}`                           | Exclui guilda                               |
+| GET       | `/api/guilda/{idGuilda}/ouro`                | Consulta ouro da guilda                     |
+| GET       | `/api/guilda/{idGuilda}/missoes-completadas` | Lista missões concluídas pelos aventureiros |
+
+#### Cadastrar guilda
+```http
+POST http://127.0.0.1:8000/api/guilda
+```
+```json
+{
+ "nome": "Ordem dos Magos",
+ "lema": "Conhecimento e coragem"
+}
+```
+#### Atualizar guilda
+```http
+PUT http://127.0.0.1:8000/api/guilda/2
+```
+```json
+{
+ "nome": "Ordem dos Grandes Magos",
+ "lema": "Sabedoria acima de tudo"
+}
+```
+### 3.5. Monstro
+
+#### Rotas disponíveis
+
+| Método    | Rota                | Função           |
+| --------- | ------------------- | ---------------- |
+| GET       | `/api/monstro`      | Lista monstros   |
+| POST      | `/api/monstro`      | Cadastra monstro |
+| GET       | `/api/monstro/{id}` | Consulta monstro |
+| PUT/PATCH | `/api/monstro/{id}` | Atualiza monstro |
+| DELETE    | `/api/monstro/{id}` | Exclui monstro   |
+
+#### Cadastrar monstro
+```http
+POST http://127.0.0.1:8000/api/monstro
+```
+```json
+{
+ "nome": "Dragão",
+ "drop_xp": 100
+}
+```
+#### Atualizar monstro
+```http
+PUT http://127.0.0.1:8000/api/monstro/4
+```
+```json
+{
+ "nome": "Dragão Ancião",
+ "drop_xp": 250
+}
+```
+### 3.6. Missões Completadas
+
+Esse recurso registra a ligação entre um aventureiro e uma missão. Ao registrar a conclusão, o sistema consulta a missão e o monstro relacionado para calcular as recompensas de ouro e experiência.
+
+#### Rotas disponíveis
+
+| Método    | Rota                                                | Função                           |
+| --------- | --------------------------------------------------- | -------------------------------- |
+| GET       | `/api/missoes_completas`                            | Lista missões completadas        |
+| POST      | `/api/missoes_completas`                            | Registra missão concluída        |
+| GET       | `/api/missoes_completas/{id}`                       | Consulta por ID (ver observação) |
+| PUT/PATCH | `/api/missoes_completas/{id}`                       | Atualiza (ver observação)        |
+| DELETE    | `/api/missoes_completas/{id}`                       | Exclui (ver observação)          |
+| GET       | `/api/missoes_completas/{idAve}/{idMissao}`         | Consulta vínculo                 |
+| PUT       | `/api/missoes_completas/{idAve}/{idMissao}`         | Atualiza aventureiro vinculado   |
+| DELETE    | `/api/missoes_completas/{idAventureiro}/{idMissao}` | Exclui vínculo                   |
+
+#### Registrar missão concluída
+```http
+POST http://127.0.0.1:8000/api/missoes_completas
+```
+```json
+{
+ "id_missao": 5,
+ "id_aventureiro": 10
+}
+```
+#### Atualizar aventureiro associado
+```http
+PUT http://127.0.0.1:8000/api/missoes_completas/10/5
+```
+```json
+{
+ "id_aventureiro": 12
+}
+```
+Atenção
+
+As rotas individuais de consulta, atualização e exclusão de missões completadas precisam de ajuste: existe divergência entre os parâmetros das rotas e os esperados pelo controller. A rota de cadastro em lote de missões também aponta para um método ainda não implementado.
+
+### 3.7. Como utilizar o ID retornado para atualizar
+
+Depois de realizar um cadastro, a API retorna o status `201` e os dados do registro criado dentro de `data`.
+
+Por exemplo, se o cadastro retornar o ID `10`, basta utilizá-lo na URL de atualização:
+```http
+PUT http://127.0.0.1:8000/api/aventureiro/10
+```
+Envie no JSON somente os campos que deseja alterar e que são permitidos para aquele recurso.
+
+### 3.8. Respostas da API
+
+As respostas seguem, em geral, uma estrutura com os campos `message` e `data`:
+```json
+{
+ "message": "Registro criado com sucesso!",
+ "data": {}
+}
+```
+#### Principais códigos HTTP
+
+- `200` — consulta, atualização ou exclusão realizada.
+
+- `201` — cadastro realizado.
+
+- `422` — dados enviados não passaram pela validação.
+
+- `404` — registro não encontrado.
+
+## 🧪 Testes automatizados
+
+#### Executar todos os testes
+```
+php artisan test
+```
+#### Executar um arquivo específico
+```
+php artisan test tests/Feature/Api/ApiClasseTest.php
+```
+#### Outros arquivos de teste
+```
+php artisan test tests/Feature/Api/AventureiroApiTest.php
+php artisan test tests/Feature/Api/GuildaApiTest.php
+php artisan test tests/Feature/Api/MissaoApiTest.php
+php artisan test tests/Feature/Api/MissoesCompletadasApiTest.php
+php artisan test tests/Feature/Api/MonstroApiTest.php
+```
+#### Executar um método específico
+```
+php artisan test --filter=test_criar_aventureiro
+```
+#### Listar todas as rotas
+```
+php artisan route:list
+```
+#### Listar somente as rotas da API
+```
+php artisan route:list --path=api
+```

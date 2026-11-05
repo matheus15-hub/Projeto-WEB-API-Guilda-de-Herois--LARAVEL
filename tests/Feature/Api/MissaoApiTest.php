@@ -62,6 +62,8 @@ class MissaoApiTest extends TestCase
             ]);
     }
 
+
+
     public function test_consultar_missao_por_id(): void
     {
         $missao = new Missao([
@@ -113,6 +115,22 @@ class MissaoApiTest extends TestCase
                 'message',
                 'data'
             ]);
+    }
+    
+        public function test_campos_obrigatorios_missao()
+    {
+        $dados =[];
+
+        $response = $this->postJson('api/missao',$dados);
+
+        $response->assertUnprocessable()
+        ->assertJsonValidationErrors(
+            ['nome',
+            'recompensa',
+            'id_monstro',
+            'quantidade_monstros',
+            'dificuldade']
+        );
     }
 
     public function test_atualizar_missao(): void

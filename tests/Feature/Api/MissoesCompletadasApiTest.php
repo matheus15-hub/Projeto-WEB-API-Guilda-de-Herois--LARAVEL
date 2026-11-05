@@ -162,6 +162,19 @@ class MissoesCompletadasApiTest extends TestCase
         ]);
     }
 
+           public function test_campos_obrigatorios_missaocompleta()
+    {
+        $dados =[];
+
+        $response = $this->postJson('/api/missoes_completas');
+
+        $response->assertUnprocessable()
+        ->assertJsonValidationErrors(
+            ['id_missao',
+            'id_aventureiro']
+        );
+    }
+
     public function test_consultar_missao_completada_por_id(): void
     {
         $retorno = collect([
