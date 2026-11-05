@@ -16,10 +16,9 @@ class ClasseWebRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome'        => ['nullable', 'string', 'max:50'],
-            'classe_nome' => ['nullable', 'string', 'max:50'],
-            'descricao'   => ['nullable', 'string', 'max:255'],
-            'raridade'    => ['required', new Enum(Raridade::class)],
+            'nome'      => ['required', 'string', 'max:50'],
+            'descricao' => ['required', 'string', 'max:255'],
+            'raridade'  => ['required', new Enum(Raridade::class)],
         ];
     }
 

@@ -29,8 +29,8 @@ class ClasseWebController extends Controller
         $dados = $request->validated();
 
         Classe::create([
-            'classe_nome' => $dados['nome'] ?? $dados['classe_nome'],
-            'descricao'   => isset($dados['descricao']) ? mb_substr($dados['descricao'], 0, 50) : null,
+            'classe_nome' => $dados['nome'],
+            'descricao'   => mb_substr($dados['descricao'], 0, 50),
             'raridade'    => $dados['raridade'],
         ]);
 

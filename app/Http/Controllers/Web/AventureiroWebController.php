@@ -56,18 +56,14 @@ class AventureiroWebController extends Controller
 
     public function show(Request $request, int $aventureiro): View
     {
-        $dados = $this->aventureiroService->buscarDetalhesParaWeb(
+        $aventureiro = $this->aventureiroService->buscarDetalhesParaWeb(
             $aventureiro,
             $this->guildaId($request)
         );
 
-        $aventureiro = $dados['aventureiro'];
-        $missoes = $dados['missoes'];
+        $missoes = $aventureiro->missoes_completadas;
 
-        return view('aventureiros.show', compact(
-            'aventureiro',
-            'missoes'
-        ));
+        return view('aventureiros.show', compact('aventureiro', 'missoes'));
     }
 
     public function edit(Request $request, int $aventureiro): View
